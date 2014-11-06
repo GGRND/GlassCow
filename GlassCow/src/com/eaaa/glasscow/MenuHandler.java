@@ -1,7 +1,5 @@
 package com.eaaa.glasscow;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 
@@ -35,7 +33,6 @@ public class MenuHandler {
 
 	public static void onMainMenuItemSelected(Activity_Main activity, Screen_CowData data, int id) {
 		Log.d("GlassCow:MenuHandler", "menu_id: " + id);
-		// TODO
 		switch (id) {
 		case MENU_SHOW_MORE:
 			if (data.hasMore()) {
@@ -44,7 +41,7 @@ public class MenuHandler {
 			break;
 		case MENU_SHOW_EVENTS:
 			if(data.hasEvents()){
-				startEventActivity(activity,data.getTitle(),data.getCowID());
+				activity.startEventActivity(data.getTitle(),data.getCowID());
 			}
 			break;
 		case MENU_INFORMATION:
@@ -73,16 +70,4 @@ public class MenuHandler {
 		}
 	}
 
-	private static void startEventActivity(Activity_Main m, int title, int id) {
-		Intent intent = new Intent(m, Activity_Events.class);
-		Bundle bundle = new Bundle();
-		bundle.putInt("Title", title);
-		bundle.putInt("Id", id);
-		intent.putExtras(bundle);
-		m.startActivity(intent);
-	}
-
-	// TODO
-	public static void onEventMenuItemSelected() {
-	}
 }

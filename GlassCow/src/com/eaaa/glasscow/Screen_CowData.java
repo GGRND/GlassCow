@@ -98,34 +98,30 @@ public class Screen_CowData {
 		nextPage();
 	}
 
-	public boolean nextPage() {
-		if (1 < totalPages) {
-			currentPage++;
-			if (currentPage > totalPages) {
-				currentPage = 1;
-			}
-			txtFooter.setText("p. " + currentPage + "/" + totalPages);
-
-			int item = currentPage * 3 - 3;
-			int i = 0;
-			while (i < 3 && item < values.size()) {
-				CowValue temp = values.get(item);
-				imageViews[i].setImageResource(temp.getRingColor());
-				txtLabelViews[i].setText(temp.getKey());
-				txtValueViews[i].setText(temp.getValue());
-				item++;
-				i++;
-			}
-			while (i < 3) {
-				imageViews[i].setImageResource(R.drawable.ring_black);
-				txtLabelViews[i].setText("");
-				txtValueViews[i].setText("");
-				i++;
-			}
-
-			return true;
+	public void nextPage() {
+		currentPage++;
+		if (currentPage > totalPages) {
+			currentPage = 1;
 		}
-		return false;
+		txtFooter.setText("p. " + currentPage + "/" + totalPages);
+
+		int item = currentPage * 3 - 3;
+		int i = 0;
+		while (i < 3 && item < values.size()) {
+			CowValue temp = values.get(item);
+			imageViews[i].setImageResource(temp.getRingColor());
+			txtLabelViews[i].setText(temp.getKey());
+			txtValueViews[i].setText(temp.getValue());
+			item++;
+			i++;
+		}
+		while (i < 3) {
+			imageViews[i].setImageResource(R.drawable.ring_black);
+			txtLabelViews[i].setText("");
+			txtValueViews[i].setText("");
+			i++;
+		}
+
 	}
 
 	public boolean hasMore() {

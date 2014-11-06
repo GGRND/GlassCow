@@ -3,10 +3,13 @@ package com.eaaa.glasscow;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -15,9 +18,12 @@ import android.widget.TextView;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowValue;
 import com.eaaa.glasscow.service.CowService;
+import com.google.android.glass.media.Sounds;
+import com.google.android.glass.touchpad.Gesture;
+import com.google.android.glass.touchpad.GestureDetector;
 import com.google.android.glass.view.WindowUtils;
 
-public class Activity_Events extends Activity {
+public class Activity_Events extends Activity implements GestureDetector.BaseListener {
 
 	private static final int MENU_SHOW_MORE = 0;
 	private static final int MENU_BACK = 1;
@@ -31,6 +37,8 @@ public class Activity_Events extends Activity {
 	private ImageView[] imageViews;
 	private TextView[] txtLabelViews, txtValueViews;
 
+	private GestureDetector gDetector;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
@@ -40,17 +48,19 @@ public class Activity_Events extends Activity {
 		unpackBundle();
 		initElements();
 		nextPage();
+		
+		gDetector = new GestureDetector(this).setBaseListener(this);
 	}
 
-	private void unpackBundle(){
+	private void unpackBundle() {
 		Log.d("GlassCow:Events", "unpackingBundle");
 		Bundle bundle = getIntent().getExtras();
 		this.id = bundle.getInt("Id");
 		this.title = getString(bundle.getInt("Title"));
-		
+
 		Cow cow = CowService.getInstance().getCow(id);
-		
-		switch(bundle.getInt("Title")){
+
+		switch (bundle.getInt("Title")) {
 		case R.string.information:
 			// Shouldn't happen
 			break;
@@ -61,13 +71,13 @@ public class Activity_Events extends Activity {
 			this.events = cow.getReproductionEvents();
 			break;
 		}
-		
+
 		this.currentPage = 0;
 		this.totalPages = (events.size() + 2) / 3;
-		Log.d("GlassCow:Events", "cp: " +  currentPage + ", tp: " + totalPages);
+		Log.d("GlassCow:Events", "cp: " + currentPage + ", tp: " + totalPages);
 		Log.d("GlassCow:Events", "events: " + events.size());
 	}
-	
+
 	private void initElements() {
 		TextView temp = (TextView) findViewById(R.id.Title);
 		temp.setText(title);
@@ -130,31 +140,46 @@ public class Activity_Events extends Activity {
 	}
 
 	private void nextPage() {
-		Log.d("GlassCow:Events", "nextPage");
-		if (1 <= totalPages) {
-			Log.d("GlassCow:Events", "nextPage_2");
-			currentPage++;
-			if (currentPage > totalPages) {
-				currentPage = 1;
-			}
-			txtFooter.setText("p. " + currentPage + "/" + totalPages);
-
-			int item = currentPage * 3 - 3;
-			int i = 0;
-			while (i < 3 && item < events.size()) {
-				CowValue temp = events.get(item);
-				imageViews[i].setImageResource(temp.getRingColor());
-				txtLabelViews[i].setText(temp.getKey());
-				txtValueViews[i].setText(temp.getValue());
-				item++;
-				i++;
-			}
-			while (i < 3) {
-				imageViews[i].setImageResource(R.drawable.ring_black);
-				txtLabelViews[i].setText("");
-				txtValueViews[i].setText("");
-				i++;
-			}
+		currentPage++;
+		if (currentPage > totalPages) {
+			currentPage = 1;
 		}
+		txtFooter.setText("p. " + currentPage + "/" + totalPages);
+
+		int item = currentPage * 3 - 3;
+		int i = 0;
+		while (i < 3 && item < events.size()) {
+			CowValue temp = events.get(item);
+			imageViews[i].setImageResource(temp.getRingColor());
+			txtLabelViews[i].setText(temp.getKey());
+			txtValueViews[i].setText(temp.getValue());
+			item++;
+			i++;
+		}
+		while (i < 3) {
+			imageViews[i].setImageResource(R.drawable.ring_black);
+			txtLabelViews[i].setText("");
+			txtValueViews[i].setText("");
+			i++;
+		}
+	}
+
+	@Override
+	public boolean onGenericMotionEvent(MotionEvent event) {
+		return gDetector.onMotionEvent(event);
+	}
+
+	@Override
+	public boolean onGesture(Gesture g) {
+		Log.d("GlassCow:Events", "gesture: " + g.name());
+		if (g == Gesture.TAP) {
+			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			am.playSoundEffect(Sounds.TAP);
+
+			nextPage();
+		} else {
+			return false;
+		}
+		return true;
 	}
 }
