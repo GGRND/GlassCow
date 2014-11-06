@@ -43,7 +43,6 @@ public class JSONCowParser {
 	}
 
 	private static void addInformation(JSONObject main, Cow cow) throws JSONException, ParseException {
-		//TODO MM/yyyy
 		// 1: Date of Birth
 		cow.addInformation(new CowValue("Date of birth", "" + CowMath.daysSince(main.getString("DateOfBirth")) + " days old")); 
 
@@ -76,11 +75,11 @@ public class JSONCowParser {
 
 		// 3: Mastitis
 		List<CowValue> healthEvents = cow.getHealthEvents();
-		CowValue temp = findEvent("SOMETHING", healthEvents); // TODO
+		CowValue temp = findEvent("Yverbetændelse", healthEvents);
 		cow.addHealth(new CowValue("Mastitis", (temp != null ? temp.getValue() : "NaN")));
 
 		// 4: Hoof trimming
-		temp = findEvent("SOMETHING", healthEvents); // TODO
+		temp = findEvent("Klovbeskæring", healthEvents);
 		cow.addHealth(new CowValue("Hoof trimming", (temp != null ? temp.getValue() : "NaN")));
 	}
 
@@ -96,7 +95,7 @@ public class JSONCowParser {
 
 		// 2: Insemination
 		List<CowValue> reproductionEvents = cow.getReproductionEvents();
-		CowValue temp = findEvent("SOMETHING", reproductionEvents); // TODO
+		CowValue temp = findEvent("Inseminering", reproductionEvents);
 		cow.addReproduction(new CowValue("Insemination", (temp != null ? temp.getValue() : "NaN")));
 
 		// 3: Dry off

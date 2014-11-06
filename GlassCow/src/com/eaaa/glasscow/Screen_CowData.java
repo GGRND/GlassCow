@@ -22,7 +22,7 @@ public class Screen_CowData {
 			this.title = title;
 		}
 
-		int getTitle() {
+		int getTitleID() {
 			return title;
 		}
 	}
@@ -48,7 +48,7 @@ public class Screen_CowData {
 
 	private void init() {
 		TextView temp = (TextView) contentView.findViewById(R.id.Title);
-		temp.setText(type.getTitle());
+		temp.setText(type.getTitleID());
 
 		txtID = (TextView) contentView.findViewById(R.id.CowID);
 		txtFooter = (TextView) contentView.findViewById(R.id.footer);
@@ -70,7 +70,7 @@ public class Screen_CowData {
 	}
 
 	public void updateCow(Cow cow) {
-		switch (type.getTitle()) {
+		switch (type.getTitleID()) {
 		case R.string.information:
 			this.updateCow(cow.getId(), cow.getInformation());
 			break;
@@ -141,7 +141,7 @@ public class Screen_CowData {
 	}
 
 	public int getTitle() {
-		return type.getTitle();
+		return type.getTitleID();
 	}
 
 	public View getContentView() {
