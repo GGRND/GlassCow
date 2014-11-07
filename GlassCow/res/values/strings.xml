@@ -21,7 +21,7 @@
     <string name="menu_show_more">Show More</string>
 	<string name="menu_show_events">Show Events</string> 
 	<string name="menu_identify">Identify Cow</string>
-	<string name="menu_exit">EXIT</string>
+	<string name="menu_exit">Exit</string>
 	    
 </resources>
 

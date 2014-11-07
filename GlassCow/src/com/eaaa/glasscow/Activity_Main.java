@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.eaaa.glasscow.AsyncCowDataChange.AsyncCowResponse;
@@ -34,8 +33,10 @@ public class Activity_Main extends Activity implements AsyncCowResponse, Gesture
 	private boolean voiceEnabled = true;
 	public CowScrollViewAdapter scrollAdapter;
 	public CardScrollView scrollView;
-	
+
 	private GestureDetector gDetector;
+	
+	private int page = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse, Gesture
 		scrollView = new CardScrollView(this);
 		scrollView.setAdapter(scrollAdapter);
 		setContentView(scrollView);
-		
+
 		gDetector = new GestureDetector(this).setBaseListener(this);
 
 		Log.d("GlassCow:Main", "Activity_Start");
@@ -82,7 +83,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse, Gesture
 
 		return views;
 	}
-	
+
 	public void startEventActivity(int title, int id) {
 		Intent intent = new Intent(this, Activity_Events.class);
 		Bundle bundle = new Bundle();
@@ -126,28 +127,34 @@ public class Activity_Main extends Activity implements AsyncCowResponse, Gesture
 	@Override
 	public boolean onCreatePanelMenu(int featureId, Menu menu) {
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
-			Log.d("GlassCow:Main", "onCreatePanelMenu" + menu);
-			getMenuInflater().inflate(R.menu.main, menu);
+			Log.d("GlassCow:Main", "onCreatePanelMenu" + scrollView.getSelectedItemPosition());
+			// getMenuInflater().inflate(R.menu.main, menu);
+			MenuHandler.updateMenu(this, menu, (Screen_CowData) scrollAdapter.getItem(page));
 			return true;
 		}
 		return super.onCreatePanelMenu(featureId, menu);
 	}
 
-	@Override
-	public boolean onPreparePanel(int featureId, View view, Menu menu) {
-		Log.d("GlassCow:Main", "onPreparePanel");
-		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
-			MenuHandler.updateMenu(this, menu, (Screen_CowData) scrollAdapter.getItem(scrollView.getSelectedItemPosition()));
-			return voiceEnabled;
-		}
-		return super.onPreparePanel(featureId, view, menu);
-	}
+//	@Override
+//	public boolean onPreparePanel(int featureId, View view, Menu menu) {
+//		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+//			Log.d("GlassCow:Main", "onPreparePanel_id: " + scrollView.getSelectedItemPosition());
+//			MenuHandler.updateMenu(this, menu, (Screen_CowData) scrollAdapter.getItem(response));
+//			return voiceEnabled;
+//		}
+//		return super.onPreparePanel(featureId, view, menu);
+//	}
 
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		Log.d("GlassCow:Main", "onMenuItemSelected");
+		Log.d("GlassCow:Main", "onMenuItemSelected " + item.getItemId());
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
-			MenuHandler.onMainMenuItemSelected(this, (Screen_CowData) scrollAdapter.getItem(scrollView.getSelectedItemPosition()), item.getItemId());
+			int temp = MenuHandler.onMainMenuItemSelected(this, (Screen_CowData) scrollAdapter.getItem(scrollView.getSelectedItemPosition()), item.getItemId());
+			if (temp != -1 && temp != page) {
+				page = temp;
+				getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
+			}
+
 		}
 		return super.onMenuItemSelected(featureId, item);
 	}
@@ -160,37 +167,38 @@ public class Activity_Main extends Activity implements AsyncCowResponse, Gesture
 			}
 			Log.d("GlassCow:Main", "Cow_Update: Success");
 			scrollAdapter.notifyDataSetChanged();
+			getWindow().invalidatePanelMenu(WindowUtils.FEATURE_VOICE_COMMANDS);
 		} else {
 			Log.d("GlassCow:Main", "Cow_Update: Failed");
 			// TODO ?
 		}
 	}
-	
+
 	@Override
-    public boolean onGenericMotionEvent(MotionEvent event) {
-        return gDetector.onMotionEvent(event);
-    }
+	public boolean onGenericMotionEvent(MotionEvent event) {
+		return gDetector.onMotionEvent(event);
+	}
 
 	@Override
 	public boolean onGesture(Gesture g) {
 		Log.d("GlassCow:Main", "gesture: " + g.name());
 		if (g == Gesture.TAP) {
-			AudioManager am =(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 			am.playSoundEffect(Sounds.TAP);
-			
+
 			Screen_CowData data = (Screen_CowData) scrollAdapter.getItem(scrollView.getSelectedItemPosition());
 			if (data.hasMore()) {
 				data.nextPage();
 			}
 		} else if (g == Gesture.TWO_TAP || g == Gesture.TWO_LONG_PRESS) {
-			AudioManager am =(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 			am.playSoundEffect(Sounds.TAP);
 			Screen_CowData data = (Screen_CowData) scrollAdapter.getItem(scrollView.getSelectedItemPosition());
 			if (data.hasEvents()) {
 				startEventActivity(data.getTitle(), data.getCowID());
 			}
 		} else if (g == Gesture.LONG_PRESS) {
-			AudioManager am =(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 			am.playSoundEffect(Sounds.SUCCESS);
 			identifyCowWithVoice();
 		} else {
