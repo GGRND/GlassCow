@@ -91,7 +91,7 @@ public class JSONCowParser {
 		}
 
 		// 1 : pregnant
-		cow.addReproduction(new CowValue("Pregnant", (main.getBoolean("PregnancyStatus") ? "Yes" : "No")));
+		  cow.addReproduction(new CowValue("Pregnant", (main.getBoolean("PregnancyStatus") ? "Yes" : "No")));
 
 		// 2: Insemination
 		List<CowValue> reproductionEvents = cow.getReproductionEvents();
@@ -104,7 +104,7 @@ public class JSONCowParser {
 		cow.addReproduction(new CowValue("Dry Off", "in " + tempInt + " days", (tempInt < 0 ? RingColor.RED : RingColor.GREEN)));
 
 		// 4: Calving
-		cow.addReproduction(new CowValue("Calving", "in" + CowMath.daysSinceAbsolute(main.get("ExpectedCalvingDate").toString()) + " days"));
+		cow.addReproduction(new CowValue("Calving", "in " + CowMath.daysSinceAbsolute(main.get("ExpectedCalvingDate").toString()) + " days"));
 
 		// 5: Latest Calving
 		cow.addReproduction(new CowValue("Last Calving", CowMath.daysSince(main.get("LastCalvingDate").toString()) + " days ago"));
@@ -113,7 +113,7 @@ public class JSONCowParser {
 		cow.addReproduction(new CowValue("Calve Number", "" + calveNumber));
 
 		// 7: Lactation
-		cow.addReproduction(new CowValue("Lactation", "" + main.get("LactationValue")));
+		// cow.addReproduction(new CowValue("Lactation", "" + main.get("LactationValue")));
 	}
 
 	private static CowValue findEvent(String target, List<CowValue> events) {

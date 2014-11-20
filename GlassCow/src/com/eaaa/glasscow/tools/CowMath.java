@@ -30,7 +30,7 @@ public class CowMath {
 	}
 
 	public static int calculateDryOff(String date, int currentCatle) throws ParseException {
-		int daysDiff = daysSince(date);
+		int daysDiff = -1*(daysSince(date));
 
 		if (currentCatle == 0) {
 			daysDiff -= 31;
