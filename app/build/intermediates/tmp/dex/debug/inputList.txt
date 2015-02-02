@@ -1,0 +1,2 @@
+/Users/morten/AndroidStudioProjects/GlassCow/app/build/intermediates/classes/debug
+/Users/morten/AndroidStudioProjects/GlassCow/app/build/intermediates/pre-dexed/debug/support-v4-19.1.0-efe7da9888e7b0a9a844fc721540eef843cec1bf.jar
