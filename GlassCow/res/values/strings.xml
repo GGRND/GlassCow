@@ -22,6 +22,8 @@
 	<string name="menu_show_events">Show Events</string> 
 	<string name="menu_identify">Identify Cow</string>
 	<string name="menu_exit">Exit</string>
+	<string name="menu_new_event">New Event</string> 
+	
 	    
 </resources>
 

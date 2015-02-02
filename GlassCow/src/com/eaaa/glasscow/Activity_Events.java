@@ -23,7 +23,8 @@ import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
 import com.google.android.glass.view.WindowUtils;
 
-public class Activity_Events extends Activity implements GestureDetector.BaseListener {
+public class Activity_Events extends Activity implements
+		GestureDetector.BaseListener {
 
 	private static final int MENU_SHOW_MORE = 0;
 	private static final int MENU_BACK = 1;
@@ -48,7 +49,7 @@ public class Activity_Events extends Activity implements GestureDetector.BaseLis
 		unpackBundle();
 		initElements();
 		nextPage();
-		
+
 		gDetector = new GestureDetector(this).setBaseListener(this);
 	}
 
@@ -58,8 +59,8 @@ public class Activity_Events extends Activity implements GestureDetector.BaseLis
 		this.id = bundle.getInt("Id");
 		this.title = getString(bundle.getInt("Title"));
 
-		Cow cow = CowService.getInstance().getCow(id);
-
+//			Cow cow = CowService.getInstance().getCow(id);
+		Cow cow = Activity_Main.cow;
 		switch (bundle.getInt("Title")) {
 		case R.string.information:
 			// Shouldn't happen
@@ -74,8 +75,8 @@ public class Activity_Events extends Activity implements GestureDetector.BaseLis
 
 		this.currentPage = 0;
 		this.totalPages = (events.size() + 2) / 3;
-		Log.d("GlassCow:Events", "cp: " + currentPage + ", tp: " + totalPages);
-		Log.d("GlassCow:Events", "events: " + events.size());
+		Log.d("GlassCow:Events", "page: " + currentPage + "/" + totalPages);
+		Log.d("GlassCow:Events", "#events: " + events.size());
 	}
 
 	private void initElements() {

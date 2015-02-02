@@ -14,6 +14,7 @@ public class MenuHandler {
 	private static final int MENU_REPRODUCTION = 4;
 	private static final int MENU_IDENTIFY = 5;
 	private static final int MENU_EXIT = 6;
+	private static final int MENU_NEW_EVENT = 7;
 
 	public static void updateMenu(Activity_Main activity, Menu menu, Screen_CowData data) {
 		Log.d("GlassCow:MenuHandler", "updating Menu " + activity.scrollView.getSelectedItemPosition());
@@ -23,6 +24,7 @@ public class MenuHandler {
 
 		if (data.hasEvents()) {
 			menu.add(Menu.NONE, MENU_SHOW_EVENTS, Menu.NONE, R.string.menu_show_events);
+			menu.add(Menu.NONE, MENU_NEW_EVENT, Menu.NONE, R.string.menu_new_event);
 		}
 		menu.add(Menu.NONE, MENU_INFORMATION, Menu.NONE, R.string.information);
 		menu.add(Menu.NONE, MENU_HEALTH, Menu.NONE, R.string.health);
@@ -43,6 +45,9 @@ public class MenuHandler {
 			if(data.hasEvents()){
 				activity.startEventActivity(data.getTitle(),data.getCowID());
 			}
+			break;
+		case MENU_NEW_EVENT:
+				activity.startNewEventActivity(data.getTitle(),data.getCowID());
 			break;
 		case MENU_INFORMATION:
 			if (activity.scrollView.getSelectedItemPosition() != 0) {
