@@ -105,8 +105,8 @@ public class Activity_NewEvent extends Activity implements GestureDetector.BaseL
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
 			switch (item.getItemId()) {
 			case MENU_CALVING:
-				events.add(new CowValue("***Kælvning***", CowMath.getDate())); // TODO
-				Log.d("GlassCow:NewEvent", "***Kælvning***");
+				events.add(new CowValue("***KÃ¦lvning***", CowMath.getDate())); // TODO
+				Log.d("GlassCow:NewEvent", "***KÃ¦lvning***");
 				finish();
 				break;
 			case MENU_BACK:
