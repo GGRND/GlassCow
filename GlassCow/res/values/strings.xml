@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- VoiceCommand -->
+    <string name="glass_voice_trigger">Show cow</string>
+    
+    <!-- Standard -->
+    <string name="app_name">GlassCow</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Misc -->
+    <string name="image_description"></string>
+    
+    <!-- DataTypes -->
+    <string name="information">Information</string>
+    <string name="health">Health</string>
+    <string name="reproduction">Reproduction</string>    
+       
+    <!-- Menu -->
+    <string name="menu_show_more">Show More</string>
+	<string name="menu_show_events">Show Events</string> 
+	<string name="menu_identify">Identify Cow</string>
+	<string name="menu_exit">Exit</string>
+	<string name="menu_new_event">New Event</string> 
+	
+	    
+</resources>
+
