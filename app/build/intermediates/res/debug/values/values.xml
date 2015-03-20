@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/Users/morten/Programming/GlassCow/app/src/main/res/values/dimens.xml -->
+    <!-- From: file:/Users/morten/AndroidStudioProjects/GlassCow/app/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="divider_size">1dp</dimen>
     <dimen name="image_size">32dp</dimen>
@@ -15,7 +15,7 @@
     <dimen name="text_size_label">24sp</dimen>
     <dimen name="text_size_top">34sp</dimen>
     <dimen name="text_size_value">24sp</dimen>
-    <!-- From: file:/Users/morten/Programming/GlassCow/app/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/morten/AndroidStudioProjects/GlassCow/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="action_settings">Settings</string>
     <string name="app_name">GlassCow</string>
@@ -30,7 +30,7 @@
     <string name="menu_show_events">Show Events</string>
     <string name="menu_show_more">Show More</string>
     <string name="reproduction">Reproduction</string>
-    <!-- From: file:/Users/morten/Programming/GlassCow/app/src/main/res/values/styles.xml -->
+    <!-- From: file:/Users/morten/AndroidStudioProjects/GlassCow/app/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <!--

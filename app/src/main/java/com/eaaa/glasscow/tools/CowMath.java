@@ -21,7 +21,12 @@ public class CowMath {
 	 * @throws ParseException
 	 */
 	public static int daysSince(String date) throws ParseException {
-		long dateInMillis = formatter.parse(date.substring(0, 10)).getTime();
+        long dateInMillis;
+        try {
+            dateInMillis = formatter.parse(date.substring(0, 10)).getTime();
+        } catch (Exception e) {
+            return 0;
+        }
 		long nowInMillis = System.currentTimeMillis();
 		long timeDifference;
 

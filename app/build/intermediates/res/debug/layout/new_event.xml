@@ -36,4 +36,4 @@
         android:gravity="start"
         android:textSize="@dimen/text_size_label" />
 
-</RelativeLayout><!-- From: file:/Users/morten/Programming/GlassCow/app/src/main/res/layout/new_event.xml -->
+</RelativeLayout><!-- From: file:/Users/morten/AndroidStudioProjects/GlassCow/app/src/main/res/layout/new_event.xml -->

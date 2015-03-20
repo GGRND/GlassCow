@@ -101,10 +101,11 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
-		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-		CowService.getInstance(this).open();
+        CowService.getInstance(this).open();
+
+        getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		scrollAdapter = new CowScrollViewAdapter(createViews());
 		scrollView = new CardScrollView(this);
@@ -113,14 +114,14 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
 		gDetector = new GestureDetector(this).setBaseListener(this);
 
-		Log.d("GlassCow:Main", "Activity_Start");
-		Cow cow = CowService.getInstance().getLastUsedCow();
+        Log.d("GlassCow:Main", "Activity_Start");
+		Cow cow = CowService.getInstance(this).getLastUsedCow();
 		if (cow != null) {
 			asyncCowResponse(cow);
 		} else {
 			identifyCowWithVoice();
 		}
-	}
+    }
 
 	@Override
 	protected void onResume() {

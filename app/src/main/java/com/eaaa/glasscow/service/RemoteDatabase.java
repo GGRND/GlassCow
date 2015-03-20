@@ -1,5 +1,6 @@
 package com.eaaa.glasscow.service;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
@@ -37,7 +38,7 @@ public class RemoteDatabase {
 
     private static abstract class postSecureRequestTask extends AsyncTask<ArrayList<String>, Void, String> {
 
-        abstract void callBack(String result);
+        abstract void callBack(String result) throws JSONException;
 
         @Override
         protected String doInBackground(ArrayList<String>... parameters) {
@@ -53,7 +54,11 @@ public class RemoteDatabase {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            callBack(result);
+            try {
+                callBack(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         //Parameters: String url, String body, HeaderName1, HeaderValue1, HeaderName2, HeaderValue2 ...
@@ -147,7 +152,11 @@ public class RemoteDatabase {
             //return SAML token
             RemoteDatabase.token = result;
 
-            callBack(result);
+            try {
+                callBack(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -207,21 +216,33 @@ public class RemoteDatabase {
         params.add("Keep-Alive");
         new postSecureRequestTask() {
             @Override
-            void callBack(String json) {
+            void callBack(String json) throws JSONException {
                 //Log.v("DEBUG", result);
 
-                try {
-                    JSONObject main = new JSONObject(json);
-                } catch (JSONException e) {
-                    Log.d("DEBUG",e.getMessage());
-                }
+
+                JSONObject main = new JSONObject(json);
+
                 //JSONArray array = main.getJSONArray("value");
                 //main = array.getJSONObject(0);
 
-                db.execSQL("DROP TABLE IF EXISTS " + TABLE_COW);
+                JSONArray cows = main.getJSONArray("value");
 
+                db.delete(TABLE_COW,null,new String[]{});
 
-                //db.insert(TABLE_COW, null, values);
+                for (int i=0; i<cows.length(); i++) {
+                    JSONObject cow = cows.getJSONObject(i);
+                    String AnimalNumber = cow.getString("AnimalNumber");
+                    String cowId = AnimalNumber.substring(AnimalNumber.length()-5);
+                    String cowJSON = cow.toString();
+                    ContentValues values = new ContentValues();
+                    values.put(FIELD_ID, cowId);
+                    values.put(FIELD_JSON, cowJSON);
+                    long result = db.insert(TABLE_COW, null, values);
+                    if (result==-1)
+                        Log.d("ERROR","Insert "+cowId+" failed!");
+                    Log.d("GlassCow:Cow", "Id: "+cowId);
+                }
+
             }
         }.execute(params);
     }

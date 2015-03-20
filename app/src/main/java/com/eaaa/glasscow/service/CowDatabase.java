@@ -46,6 +46,10 @@ public class CowDatabase extends SQLiteOpenHelper {
         RemoteDatabase.getInstance().updateCattleDatabase(db);
     }
 
+    public SQLiteDatabase getDb() {
+        return db;
+    }
+
 	public void createSampleCows() {
         getWritableDatabase();
 		Log.d("GlassCow:CowDatabase", "Step2");

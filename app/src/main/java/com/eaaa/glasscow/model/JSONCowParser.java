@@ -19,11 +19,13 @@ public class JSONCowParser {
 		Cow cow = new Cow();
 		try {
 			JSONObject main = new JSONObject(json);
-			JSONArray array = main.getJSONArray("value");
-			main = array.getJSONObject(0);
+			/*JSONArray array = main.getJSONArray("value");
+			main = array.getJSONObject(0); */
 
-			cow.setFullID(main.getString("Id"));
-			cow.setId(Integer.parseInt(cow.getFullID().substring(cow.getFullID().length() - 5)));
+            String Id = main.getString("AnimalNumber");
+			cow.setFullID(Id);
+            String shortId = Id.substring(Id.length() - 5);
+			cow.setId(Integer.parseInt(shortId));
 
 			addInformation(main, cow);
 			addHealth(main, cow);
@@ -90,8 +92,9 @@ public class JSONCowParser {
 			cow.addReproductionEvent(new CowValue(temp.getString("Text"), "" + CowMath.daysSince(temp.get("EventDate").toString()) + " days ago"));
 		}
 
+
 		// 1 : pregnant
-		  cow.addReproduction(new CowValue("Pregnant", (main.getBoolean("PregnancyStatus") ? "Yes" : "No")));
+        cow.addReproduction(new CowValue("Pregnant", (main.getString("PregnancyStatus").equalsIgnoreCase("true") ? "Yes" : "No")));
 
 		// 2: Insemination
 		List<CowValue> reproductionEvents = cow.getReproductionEvents();
@@ -99,8 +102,9 @@ public class JSONCowParser {
 		cow.addReproduction(new CowValue("Insemination", (temp != null ? temp.getValue() : "NaN")));
 
 		// 3: Dry off
-		int calveNumber = main.getInt("LastCalvingNumber");
-		int tempInt = CowMath.calculateDryOff(main.get("ExpectedCalvingDate").toString(), calveNumber);
+        String calvingNumberStr = main.getString("LastCalvingNumber");
+		int calveNumber = parseInt(calvingNumberStr);
+        int tempInt = CowMath.calculateDryOff(main.get("ExpectedCalvingDate").toString(), calveNumber);
 		cow.addReproduction(new CowValue("Dry Off", "in " + tempInt + " days", (tempInt < 0 ? RingColor.RED : RingColor.GREEN)));
 
 		// 4: Calving
@@ -115,6 +119,16 @@ public class JSONCowParser {
 		// 7: Lactation
 		// cow.addReproduction(new CowValue("Lactation", "" + main.get("LactationValue")));
 	}
+
+    private static int parseInt(String input) {
+        int result=0;
+        try {
+            result = Integer.parseInt(input);
+        } catch (Exception e) {
+            result = 0;
+        }
+        return result;
+    }
 
 	private static CowValue findEvent(String target, List<CowValue> events) {
 		int i = 0;

@@ -18,9 +18,7 @@ import android.util.Log;
 public class CowService {
 
 	private static volatile CowService service;
-
 	private CowPreference prefs;
-	private SQLiteDatabase db;
 	private CowDatabase cDB;
 
 	private CowService(Activity_Main context) {
@@ -47,21 +45,24 @@ public class CowService {
 	}
 
 	public void close() {
-		db.close();
+		cDB.getDb().close();
 	}
 
 	// Database calls
 
 	public Cow getLastUsedCow() {
-        return null;
-	/*	Log.d("GlassCow:CowService", "GetLastUsedCow");
+    	Log.d("GlassCow:CowService", "GetLastUsedCow");
 		int id = prefs.getCowID();
-		if (id != -1) {
+		if (id>=0) {
 			return getCow(id);
 		}
 
 		return null;
-*/	}
+    }
+
+    public Cow getCow(String id) {
+        return getCow(Integer.parseInt(id));
+    }
 
 	public Cow getCow(int id) {
 		Log.d("GlassCow:CowService", "getCow: " + id);
@@ -76,7 +77,11 @@ public class CowService {
 
 	public String fetchCowData(int id) {
 		Log.d("GlassCow:CowService", "fetchCowData");
-		Cursor cursorContent = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = " + id, FIELD_JSON, TABLE_COW, FIELD_ID), null);
+        String Id = String.valueOf(id);
+        while (Id.length()<5)
+            Id = "0"+Id;
+        Cursor cursorContent = cDB.getDb().query(TABLE_COW, new String[]{FIELD_ID,FIELD_JSON}, FIELD_ID+"=?", new String[]{Id}, null, null, null, null);
+		//Cursor cursorContent = cDB.getDb().rawQuery(String.format("SELECT %s FROM %s WHERE %s = " + id, FIELD_JSON, TABLE_COW, FIELD_ID), null);
 		Log.d("GlassCow:CowService", "fetchCowData2");
 		if (cursorContent.moveToFirst()) {
 			Log.d("GlassCow:CowService", "fetchCowData3");
@@ -91,7 +96,7 @@ public class CowService {
 		ContentValues values = new ContentValues();
 		values.put(FIELD_ID, cowId);
 		values.put(FIELD_JSON, cow.toString());
-		return db.insert(TABLE_COW, null, values);
+		return cDB.getDb().insert(TABLE_COW, null, values);
 	}
 
 }
