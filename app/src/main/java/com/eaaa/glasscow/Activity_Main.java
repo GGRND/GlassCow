@@ -25,6 +25,7 @@ import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollView;
+import 	java.io.*;
 
 public class Activity_Main extends Activity implements AsyncCowResponse,
 		GestureDetector.BaseListener {
@@ -42,7 +43,62 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
 	private int page = 0;
 
-	@Override
+
+    public class Configuration {
+        public String rst_template;
+        public String Endpoint;
+        public String Username;
+        public String Password;
+        public String Audience;
+        public String TrustedThumbprint;
+        public String RstTemplateFile;
+
+        public Configuration(String rst_templ) {
+            this.rst_template = readRawTextFile(R.raw.rst_template);
+            this.Username = "googleglas";
+            this.Password = "63625";
+            this.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
+            //conf.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
+            //conf.Endpoint = "https://idp.dlbr.dk/adfs/services/trust/13/usernamemixed"; //prod
+            this.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/"; //devtest
+            //conf.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
+            this.TrustedThumbprint = "38604472D35600695F4045AA62D15F4C229E1820";
+            this.RstTemplateFile = "RST_Template.xml";
+        }
+    }
+
+    private Configuration conf = null;
+
+    public String readRawTextFile(int resId)
+    {
+        InputStream inputStream = this.getResources().openRawResource(resId);
+
+        InputStreamReader inputreader = new InputStreamReader(inputStream);
+        BufferedReader buffreader = new BufferedReader(inputreader);
+        String line;
+        StringBuilder text = new StringBuilder();
+
+        try {
+            while (( line = buffreader.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return text.toString();
+    }
+
+    public Configuration getConfiguration() {
+        if (conf==null) {
+            String template = readRawTextFile(R.raw.rst_template);
+            conf = new Configuration(template);
+        }
+        return conf;
+    };
+
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);

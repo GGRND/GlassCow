@@ -6,11 +6,11 @@ import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
 
 import org.json.JSONObject;
 
+import com.eaaa.glasscow.Activity_Main;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.JSONCowParser;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -20,17 +20,16 @@ public class CowService {
 	private static volatile CowService service;
 
 	private CowPreference prefs;
-
 	private SQLiteDatabase db;
 	private CowDatabase cDB;
 
-	private CowService(Context context) {
+	private CowService(Activity_Main context) {
 		Log.d("GlassCow:CowService", "Service_Initialized");
 		cDB = new CowDatabase(context);
 		prefs = new CowPreference(context, System.currentTimeMillis());
 	}
 
-	public static CowService getInstance(Context... context) {
+	public static CowService getInstance(Activity_Main... context) {
 		if (service == null) {
 			synchronized (CowService.class) {
 				if (service == null) {
@@ -43,10 +42,8 @@ public class CowService {
 	}
 
 	public void open() {
-		db = cDB.getWritableDatabase();
-		if (cDB.getCreated()) {
-			cDB.createCows(db);
-		}
+        //cDB.createSampleCows();
+        cDB.loadRemoteCows();
 	}
 
 	public void close() {
@@ -56,13 +53,15 @@ public class CowService {
 	// Database calls
 
 	public Cow getLastUsedCow() {
-		Log.d("GlassCow:CowService", "GetLastUsedCow");
+        return null;
+	/*	Log.d("GlassCow:CowService", "GetLastUsedCow");
 		int id = prefs.getCowID();
 		if (id != -1) {
 			return getCow(id);
 		}
+
 		return null;
-	}
+*/	}
 
 	public Cow getCow(int id) {
 		Log.d("GlassCow:CowService", "getCow: " + id);

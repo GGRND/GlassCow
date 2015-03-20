@@ -13,7 +13,7 @@ public class CreateCows
 	{
 		this.db = db;
 	}
-	
+
 	public void createCow1()
 	{
 		String cow = "{"
