@@ -40,8 +40,9 @@ public class CowService {
 	}
 
 	public void open() {
-        //cDB.createSampleCows();
-        cDB.loadRemoteCows();
+        cDB.getWritableDatabase();
+        if (cDB.isCowReloadNeeded())
+            cDB.loadRemoteCows();
 	}
 
 	public void close() {

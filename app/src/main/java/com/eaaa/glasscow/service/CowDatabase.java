@@ -24,6 +24,7 @@ public class CowDatabase extends SQLiteOpenHelper {
     private final Activity_Main ctx;
     private SQLiteDatabase db = null;
     private RemoteDatabase remoteDatabase;
+    private Boolean cowReloadNeeded = false;
 
     public CowDatabase(Activity_Main context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -34,15 +35,16 @@ public class CowDatabase extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase SQLdatabase) {
         db = SQLdatabase;
 
-		db.execSQL(String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT );", TABLE_COW,	FIELD_ID, FIELD_JSON));
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COW);
+        db.execSQL(String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT );", TABLE_COW,	FIELD_ID, FIELD_JSON));
 		// db.execSQL(String.format("CREATE UNIQUE INDEX IF NOT EXISTS %s.%s ON %s (%s)", DATABASE_NAME, "CowId", TABLE_COW, FIELD_ID));
 		Log.d("GlassCow:CowDatabase", "Step1");
 
-        loadRemoteCows();
+        cowReloadNeeded = true;
 	}
 
     public void loadRemoteCows() {
-        getWritableDatabase();
+        cowReloadNeeded = false;
         RemoteDatabase.getInstance().updateCattleDatabase(db);
     }
 
@@ -66,15 +68,13 @@ public class CowDatabase extends SQLiteOpenHelper {
 		cc.createCow9();
  	}
 
-	public boolean getCreated() {
-        return db!=null;
+	public boolean isCowReloadNeeded() {
+        return this.cowReloadNeeded;
 	}
 
     @Override
     public SQLiteDatabase getWritableDatabase() {
         db = super.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COW);
-        db.execSQL(String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT );", TABLE_COW,	FIELD_ID, FIELD_JSON));
         this.remoteDatabase = RemoteDatabase.getInstance(this.ctx);
 
         return db;
