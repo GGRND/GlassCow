@@ -22,7 +22,12 @@
 	<string name="menu_show_events">Show Events</string> 
 	<string name="menu_identify">Identify Cow</string>
 	<string name="menu_exit">Exit</string>
-	<string name="menu_new_event">New Event</string> 
+	<string name="menu_new_event">New Event</string>
+
+    <string name="title_activity_scan_settings">ScanSettingsActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_scan_bar_code">ScanBarCodeActivity</string> 
 	
 	    
 </resources>

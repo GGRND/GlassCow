@@ -30,7 +30,7 @@ public class MenuHandler {
 		menu.add(Menu.NONE, MENU_HEALTH, Menu.NONE, R.string.health);
 		menu.add(Menu.NONE, MENU_REPRODUCTION, Menu.NONE, R.string.reproduction);
 		menu.add(Menu.NONE, MENU_IDENTIFY, Menu.NONE, R.string.menu_identify);
-		menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit);
+		//menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit);
 	}
 
 	public static int onMainMenuItemSelected(Activity_Main activity, Screen_CowData data, int id) {

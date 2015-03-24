@@ -12,11 +12,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher" >
         <activity
-            android:name="Activity_Main"
+            android:name=".Activity_Main"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
@@ -26,8 +35,15 @@
                 android:name="com.google.android.glass.VoiceTrigger"
                 android:resource="@xml/voice_trigger" />
         </activity>
-        <activity android:name="Activity_Events"/>
-        <activity android:name="Activity_NewEvent"/>
-        </application>
+        <activity android:name=".Activity_Events" />
+        <activity android:name=".Activity_NewEvent" />
+        <activity
+            android:name=".ScanBarCodeActivity"
+            android:label="@string/title_activity_scan_bar_code" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eaaa.glasscow.Activity_Main" />
+        </activity>
+    </application>
 
 </manifest>

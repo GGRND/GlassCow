@@ -39,11 +39,15 @@ public class CowService {
 		return service;
 	}
 
-	public void open() {
+    public void open() {
         cDB.getWritableDatabase();
         if (cDB.isCowReloadNeeded())
-            cDB.loadRemoteCows();
-	}
+            cDB.loadRemoteCows(Thread.MAX_PRIORITY);
+    }
+
+    public void reloadCows(int priority) {
+        cDB.loadRemoteCows(priority);
+    }
 
 	public void close() {
 		cDB.getDb().close();

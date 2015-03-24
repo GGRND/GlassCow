@@ -43,9 +43,9 @@ public class CowDatabase extends SQLiteOpenHelper {
         cowReloadNeeded = true;
 	}
 
-    public void loadRemoteCows() {
+    public void loadRemoteCows(int priority) {
         cowReloadNeeded = false;
-        RemoteDatabase.getInstance().updateCattleDatabase(db);
+        RemoteDatabase.getInstance(ctx).updateCattleDatabase(db, priority);
     }
 
     public SQLiteDatabase getDb() {

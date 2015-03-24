@@ -28,6 +28,7 @@ import static com.eaaa.glasscow.service.DatabaseFields.FIELD_ID;
 import static com.eaaa.glasscow.service.DatabaseFields.FIELD_JSON;
 import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
 
+import      java.util.concurrent.Executor;
 /**
  * Created by morten on 17/03/15.
  */
@@ -35,8 +36,25 @@ public class RemoteDatabase {
 
     private static RemoteDatabase instance = null;
     private static String token = null;
+    private static Activity_Main context;
+
+    class PriorityExecutor implements Executor {
+        private final int priority;
+
+        public PriorityExecutor(int priority) {
+            this.priority = priority;
+        }
+
+        public void execute(Runnable r) {
+            Thread t = new Thread(r);
+            t.setPriority(this.priority);
+            t.start();
+        }
+
+    }
 
     private static abstract class postSecureRequestTask extends AsyncTask<ArrayList<String>, Void, String> {
+
 
         abstract void callBack(String result) throws JSONException;
 
@@ -124,11 +142,11 @@ public class RemoteDatabase {
             Activity_Main.Configuration conf = context.getConfiguration();
 
             //Add URL to params
-            params.add(conf.Endpoint);
+            params.add(conf.get_Endpoint());
 
             //Add Body to params
-            String template = conf.rst_template;
-            String rst = String.format(template, conf.Endpoint, conf.Username, conf.Password, conf.Audience);
+            String template = conf.get_rst_template();
+            String rst = String.format(template, conf.get_Endpoint(), conf.get_Username(), conf.get_Password(), conf.get_Audience());
             params.add(rst);
 
             //Add header to params
@@ -160,13 +178,9 @@ public class RemoteDatabase {
         }
     }
 
-
-        private static Activity_Main context;
-
-
-    public static RemoteDatabase getInstance(Activity_Main... context) {
+    public static RemoteDatabase getInstance(Activity_Main context) {
         if (RemoteDatabase.instance==null) {
-            RemoteDatabase.instance = new RemoteDatabase(context[0]);
+            RemoteDatabase.instance = new RemoteDatabase(context);
         }
         return RemoteDatabase.instance;
     }
@@ -184,23 +198,31 @@ public class RemoteDatabase {
 
 
     public void updateCattleDatabase(final SQLiteDatabase db) {
+        updateCattleDatabase(db, Thread.NORM_PRIORITY);
+    }
+
+    public void updateCattleDatabase(final SQLiteDatabase db, final int priority) {
 
         if (token==null)
         {
             new retrieveTokenTask() {
                 @Override
                 void callBack(String result) {
-                    doUpdateCattleDatabase(db);
+                    doUpdateCattleDatabase(db, priority);
                 }
-            }.execute();
+            }.executeOnExecutor(new PriorityExecutor(priority));
         }
         else
         {
-            doUpdateCattleDatabase(db);
+            doUpdateCattleDatabase(db, priority);
         }
     }
 
-    private void doUpdateCattleDatabase(final SQLiteDatabase db)
+    private void doUpdateCattleDatabase(final SQLiteDatabase db) {
+        doUpdateCattleDatabase(db, Thread.NORM_PRIORITY);
+    }
+
+    private void doUpdateCattleDatabase(final SQLiteDatabase db, final int priority)
     {
         //get cattle info
         ArrayList<String> params = new ArrayList<String>();
@@ -241,14 +263,11 @@ public class RemoteDatabase {
                     if (result==-1)
                         Log.d("ERROR","Insert "+cowId+" failed!");
                     Log.d("GlassCow:Cow", "Id: "+cowId);
+
                 }
 
             }
-        }.execute(params);
+        }.executeOnExecutor(new PriorityExecutor(priority), params);
     }
-
-
-
-
 
 }
