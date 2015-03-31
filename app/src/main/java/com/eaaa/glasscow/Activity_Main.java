@@ -427,12 +427,4 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		return true;
 	}
 
-    private void startScanActivityForResult(Bundle extras)
-    {
-        Intent objIntent = new Intent("com.github.barcodeeye.scan.SCAN");
-        objIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-        startActivityForResult(objIntent, SCAN_REQUEST);
-
-    }
-
 }
