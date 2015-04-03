@@ -37,6 +37,8 @@
         </activity>
         <activity android:name=".Activity_Events" />
         <activity android:name=".Activity_NewEvent" />
+        <activity android:name=".Activity_Observation" />
+        <activity android:name=".Activity_NewObservation" />
         <activity
             android:name=".ScanBarCodeActivity"
             android:label="@string/title_activity_scan_bar_code" >

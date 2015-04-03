@@ -25,7 +25,7 @@ public class JSONCowParser {
             String Id = main.getString("AnimalNumber");
 			cow.setFullID(Id);
             String shortId = Id.substring(Id.length() - 5);
-			cow.setId(Integer.parseInt(shortId));
+			cow.setId(shortId);
 
 			addInformation(main, cow);
 			addHealth(main, cow);

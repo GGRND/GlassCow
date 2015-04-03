@@ -18,9 +18,10 @@
     <string name="reproduction">Reproduction</string>    
        
     <!-- Menu -->
-    <string name="menu_show_more">Show More</string>
-	<string name="menu_show_events">Show Events</string> 
-	<string name="menu_identify">Identify Cow</string>
+    <string name="menu_more">More</string>
+    <string name="menu_events">Events</string>
+    <string name="menu_observation">Observation</string>
+    <string name="menu_identify">Identify Cow</string>
 	<string name="menu_exit">Exit</string>
 	<string name="menu_new_event">New Event</string>
 

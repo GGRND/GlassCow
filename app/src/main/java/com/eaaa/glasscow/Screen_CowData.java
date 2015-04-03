@@ -10,10 +10,23 @@ import android.widget.TextView;
 
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowValue;
+import com.eaaa.glasscow.service.DatabaseFields;
 
 public class Screen_CowData {
 
-	public enum DataType {
+    public int getObservationTypeId() {
+        if (type==DataType.INFORMATION)
+            return DatabaseFields.TYPE_ID_Yver;
+        else if (type==DataType.HEALTH)
+            return DatabaseFields.TYPE_ID_Lemmer;
+        else if (type==DataType.REPRODUCTION)
+            return DatabaseFields.TYPE_ID_Brunst;
+        else
+            new Exception("Screen_CowData: Unknown type").printStackTrace();
+        return -1; //never reached.
+    }
+
+    public enum DataType {
 		INFORMATION(R.string.information), HEALTH(R.string.health), REPRODUCTION(R.string.reproduction);
 
 		int title;
@@ -27,7 +40,7 @@ public class Screen_CowData {
 		}
 	}
 
-	private int cowID;
+	private String cowID;
 	private DataType type;
 	private int currentPage, totalPages;
 	private List<CowValue> values;
@@ -83,11 +96,11 @@ public class Screen_CowData {
 		}
 	}
 
-	public void updateCow(int id, List<CowValue> values) {
+	public void updateCow(String id, List<CowValue> values) {
 		this.updateCow(id, values, null);
 	}
 
-	public void updateCow(int id, List<CowValue> values, List<CowValue> events) {
+	public void updateCow(String id, List<CowValue> values, List<CowValue> events) {
 		this.cowID = id;
 		txtID.setText("Cow: " + id);
 		this.values = values;
@@ -132,7 +145,7 @@ public class Screen_CowData {
 		return hasEvents;
 	}
 
-	public int getCowID() {
+	public String getCowID() {
 		return cowID;
 	}
 

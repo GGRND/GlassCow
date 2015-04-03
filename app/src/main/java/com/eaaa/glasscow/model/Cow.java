@@ -1,16 +1,22 @@
 package com.eaaa.glasscow.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+
+import com.eaaa.glasscow.service.DatabaseFields;
+import com.eaaa.glasscow.service.DatabaseFields.*;
 
 public class Cow {
 
 	private static final String TOSTRING = "Cow: ";
 
 	private String fullID;
-	private int id;
+	private String id;
 	private List<CowValue> information, health, reproduction;
 	private List<CowValue> healthEvents, reproductionEvents;
+    private ArrayList<CowObservation> observations; // Map: TypeId -> CowObservation container
 
 	public Cow() {
 		this.information = new ArrayList<CowValue>();
@@ -18,9 +24,19 @@ public class Cow {
 		this.reproduction = new ArrayList<CowValue>();
 		this.healthEvents = new ArrayList<CowValue>();
 		this.reproductionEvents = new ArrayList<CowValue>();
+        this.observations = new ArrayList<CowObservation>();
 	}
 
-	@Override
+    public ArrayList<CowObservation> getObservations(Integer typeId) {
+        ArrayList<CowObservation> result = new ArrayList<CowObservation>();
+        for (int i=0 ; i<observations.size() ; i++) {
+            if (observations.get(i).getTypeId().equals(typeId))
+                result.add(observations.get(i));
+        }
+        return result;
+    }
+
+    @Override
 	public String toString() {
 		return TOSTRING + id;
 	}
@@ -33,11 +49,11 @@ public class Cow {
 		this.fullID = fullID;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	protected void setId(int id) {
+	protected void setId(String id) {
 		this.id = id;
 	}
 
@@ -81,4 +97,25 @@ public class Cow {
 		return reproductionEvents;
 	}
 
+    public ArrayList<CowObservation> getObservations(int typeId) {
+        ArrayList<CowObservation> result = new ArrayList<CowObservation>();
+        for (int i=0; i<observations.size(); i++){
+            CowObservation obs = observations.get(i);
+            if (new Integer(obs.getTypeId()).intValue()==(typeId))
+                result.add(obs);
+        }
+        return result;
+    }
+
+    public void addObservation(CowObservation obs) {
+        this.observations.add(obs);
+    }
+
+    public ArrayList<CowObservation> getObservations() {
+        return observations;
+    }
+
+    public void setObservations(ArrayList<CowObservation> obsList) {
+        observations = obsList;
+    }
 }

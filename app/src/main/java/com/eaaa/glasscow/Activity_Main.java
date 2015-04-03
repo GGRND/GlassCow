@@ -209,10 +209,25 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
     }
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    protected void onStart() {
+        super.onStart();
 
         CowService.getInstance(this).open();
+
+        Log.d("GlassCow:Main", "Activity_Start");
+        Cow cow = CowService.getInstance(this).getLastUsedCow();
+        if (cow != null) {
+            asyncCowResponse(cow);
+        } else {
+            identifyCowWithVoice();
+        }
+    }
+
+        @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        CowService.getInstance(this);
         conf = new Configuration(this);
 
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
@@ -224,14 +239,6 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		setContentView(scrollView);
 
 		gDetector = new GestureDetector(this).setBaseListener(this);
-
-        Log.d("GlassCow:Main", "Activity_Start");
-		Cow cow = CowService.getInstance(this).getLastUsedCow();
-		if (cow != null) {
-			asyncCowResponse(cow);
-		} else {
-			identifyCowWithVoice();
-		}
     }
 
 	@Override
@@ -256,14 +263,23 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		return views;
 	}
 
-	public void startEventActivity(int title, int id) {
-		Intent intent = new Intent(this, Activity_Events.class);
-		Bundle bundle = new Bundle();
-		bundle.putInt("Title", title);
-		bundle.putInt("Id", id);
-		intent.putExtras(bundle);
-		startActivity(intent);
-	}
+    public void startEventActivity(int title, String id) {
+        Intent intent = new Intent(this, Activity_Events.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("Title", title);
+        bundle.putString("Id", id);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
+
+    public void startObservationActivity(String cow_id, int obs_type_id) {
+        Intent intent = new Intent(this, Activity_Observation.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("Id", cow_id);
+        bundle.putInt("TypeId", obs_type_id);
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
 
 	public void startNewEventActivity(int title, int id) {
 		Intent intent = new Intent(this, Activity_NewEvent.class);
@@ -277,7 +293,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
 	public void identifyCowWithVoice() {
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Cow number?");
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Cow number?\n(Number/Update/Settings)");
 		startActivityForResult(intent, SPEECH_REQUEST);
 	}
 

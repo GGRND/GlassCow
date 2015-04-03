@@ -2,18 +2,23 @@ package com.eaaa.glasscow.service;
 
 import static com.eaaa.glasscow.service.DatabaseFields.FIELD_ID;
 import static com.eaaa.glasscow.service.DatabaseFields.FIELD_JSON;
+import static com.eaaa.glasscow.service.DatabaseFields.FIELD_ObservationDate;
 import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
+import static com.eaaa.glasscow.service.DatabaseFields.TABLE_OBSERVATION;
 
 import org.json.JSONObject;
 
 import com.eaaa.glasscow.Activity_Main;
 import com.eaaa.glasscow.model.Cow;
+import com.eaaa.glasscow.model.CowObservation;
 import com.eaaa.glasscow.model.JSONCowParser;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 public class CowService {
 
@@ -71,16 +76,43 @@ public class CowService {
 
 	public Cow getCow(int id) {
 		Log.d("GlassCow:CowService", "getCow: " + id);
-		String result = fetchCowData(id);
-		if (result != null) {
+		String jsonResult = fetchCowJSON(id);
+		if (jsonResult != null) {
 			prefs.updateCow(id);
-			return JSONCowParser.parseJSONToCow(result);
+			Cow resultCow = JSONCowParser.parseJSONToCow(jsonResult);
+            loadObservations(resultCow);
+            return resultCow;
 		} else {
 			return null;
 		}
 	}
 
-	public String fetchCowData(int id) {
+    private void loadObservations(Cow cow) {
+        String cow_id = cow.getId();
+        Cursor cursorContent = cDB.getDb().rawQuery("SELECT * FROM "+TABLE_OBSERVATION+" WHERE "+FIELD_ID+"=?",new String[]{cow_id});
+        cursorContent.moveToFirst();
+        cow.setObservations(new ArrayList<CowObservation>());
+        while(!cursorContent.isAfterLast()) {
+            CowObservation obs = new CowObservation();
+            cow.addObservation(obs);
+            for (int i=0 ; i<cursorContent.getColumnCount(); i++) {
+                String columnName = cursorContent.getColumnName(i);
+                String value = cursorContent.getString(i);
+                if (columnName.equals(DatabaseFields.FIELD_ID))
+                    obs.setId(value);
+                else if (columnName.equals(DatabaseFields.FIELD_ObservationDate))
+                    obs.setObservationDate(value);
+                else if (columnName.equals(DatabaseFields.FIELD_ObservationTypeId))
+                    obs.setTypeId(value);
+                else
+                    if (value!=null && (value.equalsIgnoreCase("yes") || value.equals("1") || value.equalsIgnoreCase("true")))
+                        obs.setValue(columnName,true);
+            }
+            cursorContent.moveToNext();
+        }
+    }
+
+    public String fetchCowJSON(int id) {
 		Log.d("GlassCow:CowService", "fetchCowData");
         String Id = String.valueOf(id);
         while (Id.length()<5)
@@ -104,4 +136,16 @@ public class CowService {
 		return cDB.getDb().insert(TABLE_COW, null, values);
 	}
 
+    public long insertObservation(CowObservation newObs) {
+        String[] fields = DatabaseFields.obsTypeFields.get(new Integer(newObs.getTypeId()).intValue());
+        ContentValues values = new ContentValues();
+        values.put(DatabaseFields.FIELD_ID, newObs.getId());
+        values.put(DatabaseFields.FIELD_ObservationTypeId, newObs.getTypeId());
+        for (int f = 0; f < fields.length; f++) {
+            values.put(fields[f], newObs.getValue(fields[f]));
+        }
+        long result = cDB.getDb().insert(TABLE_OBSERVATION, null, values);
+        loadObservations(Activity_Main.cow);
+        return result;
+    }
 }

@@ -1,8 +1,6 @@
 package com.eaaa.glasscow.service;
 
-import static com.eaaa.glasscow.service.DatabaseFields.FIELD_ID;
-import static com.eaaa.glasscow.service.DatabaseFields.FIELD_JSON;
-import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
+import static com.eaaa.glasscow.service.DatabaseFields.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,9 +33,36 @@ public class CowDatabase extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase SQLdatabase) {
         db = SQLdatabase;
 
+        /**
+         * Cow table
+         */
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COW);
         db.execSQL(String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT );", TABLE_COW,	FIELD_ID, FIELD_JSON));
-		// db.execSQL(String.format("CREATE UNIQUE INDEX IF NOT EXISTS %s.%s ON %s (%s)", DATABASE_NAME, "CowId", TABLE_COW, FIELD_ID));
+        // db.execSQL(String.format("CREATE UNIQUE INDEX IF NOT EXISTS %s.%s ON %s (%s)", DATABASE_NAME, "CowId", TABLE_COW, FIELD_ID));
+
+        /**
+         * Observation table
+         */
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBSERVATION);
+        db.execSQL("CREATE TABLE "+TABLE_OBSERVATION+"( obs_id integer primary key autoincrement not null, " +
+                        FIELD_ID+" TEXT, "+
+                        FIELD_ObservationTypeId+" TEXT, "+
+                        FIELD_ObservationDate+" DATETIME DEFAULT CURRENT_TIMESTAMP, "+
+                        FIELD_Sent+" INTEGER, "+
+                        FIELD_LeftFront+" INTEGER, "+
+                        FIELD_RightFront+" INTEGER, "+
+                        FIELD_LeftBack+" INTEGER, "+
+                        FIELD_RightBack+" INTEGER, "+
+                        FIELD_Clots+" INTEGER, "+
+                        FIELD_VisibleAbnormalities+" INTEGER, "+
+                        FIELD_Sore+" INTEGER, "+
+                        FIELD_Swollen+" INTEGER, "+
+                        FIELD_Limp+" INTEGER, "+
+                        FIELD_Mucus+" INTEGER, "+
+                        FIELD_StandingHeat+" INTEGER, "+
+                        FIELD_BleedOff+" INTEGER, "+
+                        FIELD_Mount+" INTEGER  );");
+
 		Log.d("GlassCow:CowDatabase", "Step1");
 
         cowReloadNeeded = true;
