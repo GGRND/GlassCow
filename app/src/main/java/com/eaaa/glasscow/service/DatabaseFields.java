@@ -47,13 +47,13 @@ public class DatabaseFields
      */
     public static String getDisplayName(String FIELD_NAME) {
         if (FIELD_NAME.equals(FIELD_LeftFront)) {
-                return "V.Forben";
+                return "V.For";
         } else if (FIELD_NAME.equals(FIELD_RightFront)) {
-                return "H.Forben";
+                return "H.For";
         } else if (FIELD_NAME.equals(FIELD_LeftBack)) {
-                return "V.Bagben";
+                return "V.Bag";
         } else if (FIELD_NAME.equals(FIELD_RightBack)) {
-                return "H.Bagben";
+                return "H.Bag";
         } else if (FIELD_NAME.equals(FIELD_AnimalId)) {
                 return "Dyr nr";
         } else if (FIELD_NAME.equals(FIELD_Clots)) {

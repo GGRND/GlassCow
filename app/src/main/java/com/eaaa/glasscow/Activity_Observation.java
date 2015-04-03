@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -44,6 +45,8 @@ public class Activity_Observation extends Activity implements
     private static final int MENU_SHOW_MORE = 0;
     private static final int MENU_BACK = 1;
     private static final int MENU_NEW = 2;
+
+    private static final String SAVE = "Save";
 
     private static final int FIELD_QUESTION = 0;
 
@@ -149,7 +152,7 @@ public class Activity_Observation extends Activity implements
         return super.onMenuItemSelected(featureId, item);
     }
 
-    private int getNextObservationEmptyQuestionId() {
+    private void createNewObservation() {
         String[] fields = DatabaseFields.obsTypeFields.get(this.typeId);
         if (newObservation==null) {
             newObservation = new CowObservation();
@@ -157,28 +160,25 @@ public class Activity_Observation extends Activity implements
             newObservation.setId(this.id);
             Activity_Main.cow.addObservation(newObservation);
         }
-        int fieldNumber = 0;
-        for (fieldNumber=0 ; fieldNumber<fields.length && newObservation.getValue(fields[fieldNumber])!=null ; fieldNumber++);
 
-        return fieldNumber;
-    }
+            String questionText = "";
+            for (int i=0 ; i<fields.length ; i++) {
+                if (i>0)
+                    if (new Long(i/2)*2==i || fields.length<7)
+                        questionText += "\n";
+                    else
+                        questionText += ", ";
+                questionText += "0"+String.valueOf(i+1)+": "+DatabaseFields.getDisplayName(fields[i])+"? ";
+                boolean set = Boolean.TRUE.equals(newObservation.getValue(fields[i]));
+                questionText += set?"Yes ":"No ";
+            }
+            questionText += "\n0"+String.valueOf(fields.length+1)+": "+SAVE+"?";
 
-    private void createNewObservation() {
-        String[] fields = DatabaseFields.obsTypeFields.get(this.typeId);
-        int fieldNumber = getNextObservationEmptyQuestionId();
-
-        if (fieldNumber<fields.length) {
             //Ask missing question
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, DatabaseFields.getDisplayName(fields[fieldNumber])+ "?\n(Yes/No)");
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, questionText);
             startActivityForResult(intent, FIELD_QUESTION);
-        } else {
-            //Store created new Observation
-            CowService.getInstance().insertObservation(newObservation);
-            newObservation=null;
-            initializeDisplay();
-            nextPage();
-        }
+
     }
 
     @Override
@@ -188,10 +188,27 @@ public class Activity_Observation extends Activity implements
             List<String> results = data
                     .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
-            int fieldNumber = getNextObservationEmptyQuestionId();
             String[] fields = DatabaseFields.obsTypeFields.get(this.typeId);
-            newObservation.setValue(fields[fieldNumber], spokenText.equalsIgnoreCase("yes"));
-            createNewObservation();
+            long spokenNumber = 0;
+            try {
+                spokenNumber = new Long(spokenText).longValue();
+            } catch (Exception e) {
+                spokenNumber = 0;
+            }
+            if (spokenText.equalsIgnoreCase(SAVE) || new Long(fields.length+1).equals(spokenNumber)) {
+                //Store created new Observation
+                CowService.getInstance().insertObservation(newObservation);
+                newObservation=null;
+                initializeDisplay();
+                nextPage();
+            } else {
+                for (int i=0 ; i<fields.length ; i++) {
+                    if (spokenText.equalsIgnoreCase(DatabaseFields.getDisplayName(fields[i])) ||
+                            new Long(i+1).equals(spokenNumber))
+                        newObservation.setValue(fields[i], newObservation.getValue(fields[i]) != Boolean.TRUE);
+                }
+                createNewObservation();
+            }
         }
     }
 
@@ -206,6 +223,7 @@ public class Activity_Observation extends Activity implements
             CowObservation temp = observations.get(currentPage-1);
             imageView.setImageResource(R.drawable.ring_white);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
             String DisplayDate = "";
             try {
                 Date obsDate = dateFormat.parse(temp.getObservationDate());
@@ -213,7 +231,8 @@ public class Activity_Observation extends Activity implements
                 long diff = today.getTime() - obsDate.getTime();
                 long days = diff/1000/60/60/24;
                 long hours = (diff-days*1000*60*60*24)/1000/60/60;
-                DisplayDate = (days>0?(String.valueOf(days)+" dage"):(String.valueOf(hours)+ " timer"))+" siden";
+                long minutes = (diff-(days*1000*60*60*24+hours*1000*60*60))/1000/60;
+                DisplayDate = (days>0?(String.valueOf(days)+" dage"):(hours>0?(String.valueOf(hours)+ " timer"):(String.valueOf(minutes)+ " minutter")))+" siden";
             } catch (ParseException e) {
                 e.printStackTrace();
             }
