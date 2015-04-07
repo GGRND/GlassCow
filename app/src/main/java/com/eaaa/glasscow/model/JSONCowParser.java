@@ -19,13 +19,20 @@ public class JSONCowParser {
 		Cow cow = new Cow();
 		try {
 			JSONObject main = new JSONObject(json);
-			/*JSONArray array = main.getJSONArray("value");
-			main = array.getJSONObject(0); */
 
-            String Id = main.getString("AnimalNumber");
-			cow.setFullID(Id);
-            String shortId = Id.substring(Id.length() - 5);
-			cow.setId(shortId);
+            /* Animal number */
+            String fullNumber = main.getString("AnimalNumber");
+			cow.setFullNumber(fullNumber);
+            String shortNumber = fullNumber.substring(fullNumber.length() - 5);
+			cow.setShortNumber(shortNumber);
+
+            /* HerdId */
+            String herdId = main.getString("HerdId");
+            cow.setHerdId(herdId);
+
+            /* AnimalId */
+            String animalId = main.getString("AnimalId");
+            cow.setAnimalId(animalId);
 
 			addInformation(main, cow);
 			addHealth(main, cow);

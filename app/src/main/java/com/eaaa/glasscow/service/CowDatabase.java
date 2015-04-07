@@ -4,17 +4,17 @@ import static com.eaaa.glasscow.service.DatabaseFields.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.model.CowObservation;
 
 public class CowDatabase extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 2;
@@ -37,15 +37,15 @@ public class CowDatabase extends SQLiteOpenHelper {
          * Cow table
          */
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_COW);
-        db.execSQL(String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT );", TABLE_COW,	FIELD_ID, FIELD_JSON));
-        // db.execSQL(String.format("CREATE UNIQUE INDEX IF NOT EXISTS %s.%s ON %s (%s)", DATABASE_NAME, "CowId", TABLE_COW, FIELD_ID));
+        db.execSQL(String.format("CREATE TABLE %s (%s TEXT PRIMARY KEY, %s TEXT );", TABLE_COW, FIELD_AnimalShortNumber, FIELD_JSON));
 
         /**
          * Observation table
          */
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBSERVATION);
-        db.execSQL("CREATE TABLE "+TABLE_OBSERVATION+"( obs_id integer primary key autoincrement not null, " +
-                        FIELD_ID+" TEXT, "+
+        db.execSQL("CREATE TABLE "+TABLE_OBSERVATION+"( "+FIELD_OBS_ID+" integer primary key autoincrement not null, " +
+                FIELD_AnimalId +" TEXT, "+
+                FIELD_HerdId +" TEXT, "+
                         FIELD_ObservationTypeId+" TEXT, "+
                         FIELD_ObservationDate+" DATETIME DEFAULT CURRENT_TIMESTAMP, "+
                         FIELD_Sent+" INTEGER, "+
@@ -68,9 +68,13 @@ public class CowDatabase extends SQLiteOpenHelper {
         cowReloadNeeded = true;
 	}
 
-    public void loadRemoteCows(int priority) {
+    public void loadRemoteCows() {
         cowReloadNeeded = false;
-        RemoteDatabase.getInstance(ctx).updateCattleDatabase(db, priority);
+        RemoteDatabase.getInstance(ctx).updateCattleDatabase(db);
+    }
+
+    public void sentObservationsToRemote(ArrayList<CowObservation> observations) {
+        RemoteDatabase.getInstance(ctx).sendObservations(db,observations);
     }
 
     public SQLiteDatabase getDb() {

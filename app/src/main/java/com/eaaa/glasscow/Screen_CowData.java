@@ -14,6 +14,8 @@ import com.eaaa.glasscow.service.DatabaseFields;
 
 public class Screen_CowData {
 
+    private String animalId;
+
     public int getObservationTypeId() {
         if (type==DataType.INFORMATION)
             return DatabaseFields.TYPE_ID_Yver;
@@ -40,7 +42,7 @@ public class Screen_CowData {
 		}
 	}
 
-	private String cowID;
+	private String animalShortNumber;
 	private DataType type;
 	private int currentPage, totalPages;
 	private List<CowValue> values;
@@ -85,24 +87,25 @@ public class Screen_CowData {
 	public void updateCow(Cow cow) {
 		switch (type.getTitleID()) {
 		case R.string.information:
-			this.updateCow(cow.getId(), cow.getInformation());
+			this.updateCow(cow.getShortNumber(), cow.getAnimalId(), cow.getInformation());
 			break;
 		case R.string.health:
-			this.updateCow(cow.getId(), cow.getHealth(), cow.getHealthEvents());
+			this.updateCow(cow.getShortNumber(), cow.getAnimalId(), cow.getHealth(), cow.getHealthEvents());
 			break;
 		case R.string.reproduction:
-			this.updateCow(cow.getId(), cow.getReproduction(), cow.getReproductionEvents());
+			this.updateCow(cow.getShortNumber(), cow.getAnimalId(), cow.getReproduction(), cow.getReproductionEvents());
 			break;
 		}
 	}
 
-	public void updateCow(String id, List<CowValue> values) {
-		this.updateCow(id, values, null);
+	public void updateCow(String id, String animalId, List<CowValue> values) {
+		this.updateCow(id, animalId, values, null);
 	}
 
-	public void updateCow(String id, List<CowValue> values, List<CowValue> events) {
-		this.cowID = id;
-		txtID.setText("Cow: " + id);
+	public void updateCow(String animalShortNumber, String animalId, List<CowValue> values, List<CowValue> events) {
+        this.animalShortNumber = animalShortNumber;
+        this.animalId = animalId;
+        txtID.setText("Cow: " + animalShortNumber);
 		this.values = values;
 		this.hasEvents = (events != null);
 		this.currentPage = 0;
@@ -145,9 +148,13 @@ public class Screen_CowData {
 		return hasEvents;
 	}
 
-	public String getCowID() {
-		return cowID;
-	}
+    public String getAnimalShortNumber() {
+        return animalShortNumber;
+    }
+
+    public String getAnimalId() {
+        return animalId;
+    }
 
 	public int getTitle() {
 		return type.getTitleID();

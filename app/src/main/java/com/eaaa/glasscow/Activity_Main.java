@@ -32,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.*;
 
 public class Activity_Main extends Activity implements AsyncCowResponse,
 		GestureDetector.BaseListener {
@@ -71,6 +70,12 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
         private final static String Password_key = "Password";
         private String Password;
 
+        private final static String AgriBusinessId_key = "AgriBusinessId";
+        private String AgriBusinessId;
+
+        private final static String Host_key = "Host";
+        private String Host;
+
         private final static String Audience_key = "Audience";
         private String Audience;
 
@@ -89,6 +94,12 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
         public String get_Audience() {
             return Audience;
         };
+        public String get_AgriBusinessId() {
+            return AgriBusinessId;
+        };
+        public String get_Host() {
+            return Host;
+        };
 
         private void LoadDefaultPreferences() {
             this.rst_template = readRawTextFile(R.raw.rst_template);
@@ -97,9 +108,11 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
             this.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
             //conf.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
             //conf.Endpoint = "https://idp.dlbr.dk/adfs/services/trust/13/usernamemixed"; //prod
+            this.Host = "devtest-dcf-odata.vfltest.dk"; //devtest
             this.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/"; //devtest
             //conf.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
             //this.TrustedThumbprint = "38604472D35600695F4045AA62D15F4C229E1820";
+            this.AgriBusinessId = "54581";
         }
 
         public void LoadSharedPreferences()
@@ -123,10 +136,18 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
             String aud = prefs.getString(Audience_key,null);
             if (aud!=null)
                 Audience=aud;
+
+            String agri = prefs.getString(AgriBusinessId_key,null);
+            if (agri!=null)
+                AgriBusinessId=agri;
+
+            String host = prefs.getString(Host_key,null);
+            if (host!=null)
+                Host=host;
         }
 
         //Sample:
-        //{Username:"googleglas",Password:"63625",Endpoint:"https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed",Audience:"https://devtest-dcf-odata.vfltest.dk/DCFOData/"}
+        //{Username:"googleglas",Password:"63625",Endpoint:"https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed",Audience:"https://devtest-dcf-odata.vfltest.dk/DCFOData/",AgriBusinessId:"54581",HerdId:"6362512",Host:"devtest-dcf-odata.vfltest.dk"}
         public void SetConfiguration(String json)
         {
             SharedPreferences.Editor editor = prefs.edit();
@@ -164,6 +185,18 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
                         String aud = config.getString(Audience_key);
                         Audience = aud;
                         editor.putString(Audience_key, aud);
+                    }
+
+                    if (config.has(AgriBusinessId_key)) {
+                        String agri = config.getString(AgriBusinessId_key);
+                        AgriBusinessId = agri;
+                        editor.putString(AgriBusinessId_key, agri);
+                    }
+
+                    if (config.has(Host_key)) {
+                        String host = config.getString(Host_key);
+                        Host = host;
+                        editor.putString(Host_key, host);
                     }
 
                 } catch (JSONException e) {
@@ -272,10 +305,9 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
         startActivity(intent);
     }
 
-    public void startObservationActivity(String cow_id, int obs_type_id) {
+    public void startObservationActivity(int obs_type_id) {
         Intent intent = new Intent(this, Activity_Observation.class);
         Bundle bundle = new Bundle();
-        bundle.putString("Id", cow_id);
         bundle.putInt("TypeId", obs_type_id);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -313,7 +345,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 			}
             else if (spokenText.equals("update"))
             {
-                CowService.getInstance(this).reloadCows(Thread.MIN_PRIORITY);
+                CowService.getInstance(this).reloadCows();
             }
             else if (spokenText.equals("settings"))
             {
@@ -431,7 +463,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 			Screen_CowData data = (Screen_CowData) scrollAdapter
 					.getItem(scrollView.getSelectedItemPosition());
 			if (data.hasEvents()) {
-				startEventActivity(data.getTitle(), data.getCowID());
+				startEventActivity(data.getTitle(), data.getAnimalShortNumber());
 			}
 		} else if (g == Gesture.LONG_PRESS) {
 			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);

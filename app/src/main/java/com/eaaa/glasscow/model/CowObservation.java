@@ -8,15 +8,31 @@ import java.util.HashMap;
  * Created by morten on 02/04/15.
  */
 public class CowObservation {
-    private String id, typeId, observationDate;
+    private String observationId, animalId, typeId, herdId, observationDate;
     private HashMap<String, Boolean> valueMap = new HashMap<String, Boolean>();
 
-    public String getId() {
-        return id;
+    public void setObservationId(String observationId) {
+        this.observationId = observationId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getObservationId() {
+        return observationId;
+    }
+
+    public String getAnimalId() {
+        return animalId;
+    }
+
+    public void setAnimalId(String cowid) {
+        this.animalId = cowid;
+    }
+
+    public String getHerdId() {
+        return herdId;
+    }
+
+    public void setHerdId(String herdId) {
+        this.herdId = herdId;
     }
 
     public String getTypeId() {

@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.model.CowObservation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,9 +25,7 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static com.eaaa.glasscow.service.DatabaseFields.FIELD_ID;
-import static com.eaaa.glasscow.service.DatabaseFields.FIELD_JSON;
-import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
+import static com.eaaa.glasscow.service.DatabaseFields.*;
 
 import      java.util.concurrent.Executor;
 /**
@@ -116,7 +115,7 @@ public class RemoteDatabase {
             int responseCode = con.getResponseCode();
             if (responseCode / 100 != 2)
             {
-                throw new IOException("Non-2xx status code: " + responseCode);
+                throw new IOException("Non-2xx status code: " + responseCode + " " + con.getResponseMessage());
             }
 
             //Read response
@@ -187,53 +186,39 @@ public class RemoteDatabase {
 
    private RemoteDatabase(Activity_Main context) {
        RemoteDatabase.context = context;
-
-        //initialize logging
-        //File MyFile = new File(System.getProperty("user.dir")+File.separator+"conf"+File.separator+"log4j.properties");
-        //PropertyConfigurator.configure(MyFile.getAbsolutePath());
-
-        //get saml token
-        //updateCattleDatabase();
    }
 
-
     public void updateCattleDatabase(final SQLiteDatabase db) {
-        updateCattleDatabase(db, Thread.NORM_PRIORITY);
-    }
-
-    public void updateCattleDatabase(final SQLiteDatabase db, final int priority) {
 
         if (token==null)
         {
             new retrieveTokenTask() {
                 @Override
                 void callBack(String result) {
-                    doUpdateCattleDatabase(db, priority);
+                    doUpdateCattleDatabase(db);
                 }
-            }.executeOnExecutor(new PriorityExecutor(priority));
+            }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
         }
         else
         {
-            doUpdateCattleDatabase(db, priority);
+            doUpdateCattleDatabase(db);
         }
     }
 
-    private void doUpdateCattleDatabase(final SQLiteDatabase db) {
-        doUpdateCattleDatabase(db, Thread.NORM_PRIORITY);
-    }
-
-    private void doUpdateCattleDatabase(final SQLiteDatabase db, final int priority)
+    private void doUpdateCattleDatabase(final SQLiteDatabase db)
     {
+        Activity_Main.Configuration conf = context.getConfiguration();
+
         //get cattle info
         ArrayList<String> params = new ArrayList<String>();
-        params.add("https://devtest-dcf-odata.vfltest.dk/DCFOData/CattleWebApi/GoogleGlassesOperations/GetCowIndexCardMobilesForAgriBusiness?AgriBusinessId=54581");
-        params.add("{\"$id\":\"1\",\"AgriBusinessId\":\"54581\"}");
+        params.add(conf.get_Audience()+"CattleWebApi/GoogleGlassesOperations/GetCowIndexCardMobilesForAgriBusiness?AgriBusinessId="+conf.get_AgriBusinessId());
+        params.add("{\"$id\":\"1\",\"AgriBusinessId\":\""+conf.get_AgriBusinessId()+"\"}");
         params.add("Authorization");
         params.add("SAML " + token);
         params.add("Content-Type");
         params.add("application/json");
         params.add("Host");
-        params.add("devtest-dcf-odata.vfltest.dk");
+        params.add(conf.get_Host());
         params.add("Connection");
         params.add("Keep-Alive");
         new postSecureRequestTask() {
@@ -254,20 +239,98 @@ public class RemoteDatabase {
                 for (int i=0; i<cows.length(); i++) {
                     JSONObject cow = cows.getJSONObject(i);
                     String AnimalNumber = cow.getString("AnimalNumber");
-                    String cowId = AnimalNumber.substring(AnimalNumber.length()-5);
+                    String animalShortNumber = AnimalNumber.substring(AnimalNumber.length()-5);
                     String cowJSON = cow.toString();
                     ContentValues values = new ContentValues();
-                    values.put(FIELD_ID, cowId);
+                    values.put(FIELD_AnimalShortNumber, animalShortNumber);
                     values.put(FIELD_JSON, cowJSON);
                     long result = db.insert(TABLE_COW, null, values);
                     if (result==-1)
-                        Log.d("ERROR","Insert "+cowId+" failed!");
-                    Log.d("GlassCow:Cow", "Id: "+cowId);
+                        Log.d("ERROR","Insert "+animalShortNumber+" failed!");
+                    Log.d("GlassCow:Cow", "Id: "+animalShortNumber);
 
                 }
 
             }
-        }.executeOnExecutor(new PriorityExecutor(priority), params);
+        }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
 
+
+    /**
+     *
+     */
+    public void sendObservations(final SQLiteDatabase db, final ArrayList<CowObservation> observations) {
+        if (token==null)
+        {
+            new retrieveTokenTask() {
+                @Override
+                void callBack(String result) {
+                    doSendObservations(db, observations);
+                }
+            }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
+        }
+        else
+        {
+            doSendObservations(db, observations);
+        }
+    }
+
+    private void doSendObservations(final SQLiteDatabase db, final ArrayList<CowObservation> observations) {
+        Activity_Main.Configuration conf = context.getConfiguration();
+
+        //Initialize first observation to sent
+        int i;
+        for (i = 0; i<observations.size() && observations.get(i).getValue(FIELD_Sent)==Boolean.TRUE; i++);
+        if (i >= observations.size())
+            return;
+        CowObservation obs = observations.get(i);
+
+        //Mark observation as sent to backend database
+        ContentValues Values = new ContentValues();
+        Values.put(FIELD_Sent, true);
+        db.update(TABLE_OBSERVATION, Values, "obs_id=?", new String[]{obs.getObservationId()});
+        obs.setValue(FIELD_Sent, true);
+
+        //send observation to backend database
+        ArrayList<String> params = new ArrayList<String>();
+        params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
+        params.add("{\"$id\":\"1\"," +
+                "\"AnimalId\":\"" + obs.getAnimalId() + "\"," +
+                "\"HerdId\":\"" + obs.getHerdId() + "\"," +
+                "\"ObservationTypeId\":\"" + (Integer.valueOf(obs.getTypeId()).intValue()+1) + "\"," +
+                "\"ObservationDate\":\"0001-01-01T00:00:00\"," + // "0001-01-01T00:00:00"
+                "\"LeftFront\":" + String.valueOf(obs.getValue(FIELD_LeftFront)) + "," +
+                "\"RightFront\":" + String.valueOf(obs.getValue(FIELD_RightFront)) + "," +
+                "\"LeftBack\":" + String.valueOf(obs.getValue(FIELD_LeftBack)) + "," +
+                "\"RightBack\":" + String.valueOf(obs.getValue(FIELD_RightBack)) + "," +
+                "\"Clots\":" + String.valueOf(obs.getValue(FIELD_Clots)) + "," +
+                "\"VisibleAbnormalities\":" + String.valueOf(obs.getValue(FIELD_VisibleAbnormalities)) + "," +
+                "\"Sore\":" + String.valueOf(obs.getValue(FIELD_Sore)) + "," +
+                "\"Swollen\":" + String.valueOf(obs.getValue(FIELD_Swollen)) + "," +
+                "\"Limp\":" + String.valueOf(obs.getValue(FIELD_Limp)) + "," +
+                "\"Mucus\":" + String.valueOf(obs.getValue(FIELD_Mucus)) + "," +
+                "\"StandingHeat\":" + String.valueOf(obs.getValue(FIELD_StandingHeat)) + "," +
+                "\"BleedOff\":" + String.valueOf(obs.getValue(FIELD_BleedOff)) + "," +
+                "\"Mount\":" + String.valueOf(obs.getValue(FIELD_Mount)) + "}");
+
+        params.add("Authorization");
+        params.add("SAML " + token);
+
+        params.add("Accept-Encoding");
+        params.add("gzip, deflate");
+
+        params.add("Content-Type");
+        params.add("application/json; charset=utf-8");
+
+        params.add("Host");
+        params.add(conf.get_Host());
+
+        new postSecureRequestTask() {
+            @Override
+            void callBack(String result) throws JSONException {
+                Log.d("Sent obs response", result);
+                doSendObservations(db, observations);
+            }
+        }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
+    }
 }

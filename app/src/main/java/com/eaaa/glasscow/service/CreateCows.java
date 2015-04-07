@@ -2,7 +2,7 @@ package com.eaaa.glasscow.service;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import static com.eaaa.glasscow.service.DatabaseFields.FIELD_ID;
+import static com.eaaa.glasscow.service.DatabaseFields.FIELD_AnimalId;
 import static com.eaaa.glasscow.service.DatabaseFields.FIELD_JSON;
 import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
 
@@ -101,7 +101,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "2146");
+		values.put(FIELD_AnimalId, "2146");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -193,7 +193,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "2145");
+		values.put(FIELD_AnimalId, "2145");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -285,7 +285,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1440");
+		values.put(FIELD_AnimalId, "1440");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -377,7 +377,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1443");
+		values.put(FIELD_AnimalId, "1443");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -469,7 +469,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1430");
+		values.put(FIELD_AnimalId, "1430");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -561,7 +561,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1421");
+		values.put(FIELD_AnimalId, "1421");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -653,7 +653,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1435");
+		values.put(FIELD_AnimalId, "1435");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -745,7 +745,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1444");
+		values.put(FIELD_AnimalId, "1444");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}
@@ -837,7 +837,7 @@ public class CreateCows
                 + "}";
 		
 		ContentValues values = new ContentValues();
-		values.put(FIELD_ID, "1257");
+		values.put(FIELD_AnimalId, "1257");
 		values.put(FIELD_JSON, cow);
 		db.insert(TABLE_COW, null, values);
 	}

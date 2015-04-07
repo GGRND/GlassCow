@@ -1,19 +1,13 @@
 package com.eaaa.glasscow.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
-import com.eaaa.glasscow.service.DatabaseFields;
-import com.eaaa.glasscow.service.DatabaseFields.*;
 
 public class Cow {
 
 	private static final String TOSTRING = "Cow: ";
 
-	private String fullID;
-	private String id;
+	private String herdId, animalId, fullNumber, shortNumber;
 	private List<CowValue> information, health, reproduction;
 	private List<CowValue> healthEvents, reproductionEvents;
     private ArrayList<CowObservation> observations; // Map: TypeId -> CowObservation container
@@ -38,23 +32,23 @@ public class Cow {
 
     @Override
 	public String toString() {
-		return TOSTRING + id;
+		return TOSTRING + shortNumber;
 	}
 	
-	public String getFullID(){
-		return fullID;
+	public String getFullNumber(){
+		return fullNumber;
 	}
 	
-	public void setFullID(String fullID){
-		this.fullID = fullID;
+	public void setFullNumber(String fullID){
+		this.fullNumber = fullID;
 	}
 
-	public String getId() {
-		return id;
+	public String getShortNumber() {
+		return shortNumber;
 	}
 
-	protected void setId(String id) {
-		this.id = id;
+	protected void setShortNumber(String id) {
+		this.shortNumber = id;
 	}
 
 	protected void addInformation(CowValue element) {
@@ -117,5 +111,21 @@ public class Cow {
 
     public void setObservations(ArrayList<CowObservation> obsList) {
         observations = obsList;
+    }
+
+    public void setHerdId(String herdId) {
+        this.herdId = herdId;
+    }
+
+    public String getHerdId() {
+        return herdId;
+    }
+
+    public void setAnimalId(String animalId) {
+        this.animalId = animalId;
+    }
+
+    public String getAnimalId() {
+        return animalId;
     }
 }

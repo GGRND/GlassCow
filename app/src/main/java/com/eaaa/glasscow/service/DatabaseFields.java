@@ -9,7 +9,7 @@ public class DatabaseFields
      * Cow card table
      */
 	public static final String TABLE_COW = "cow";
-	public static final String FIELD_ID = "id";
+    public static final String FIELD_AnimalShortNumber = "AnimalShortNumber";
 	public static final String FIELD_JSON = "json";
 
     /**
@@ -22,6 +22,7 @@ public class DatabaseFields
     /**
      * Observation field names
      */
+    public static final String FIELD_OBS_ID = "obs_id";
     public static final String TABLE_OBSERVATION = "observation";
     public static final String FIELD_AnimalId = "AnimalId";
     public static final String FIELD_HerdId = "HerdId";
@@ -86,7 +87,7 @@ public class DatabaseFields
     static {
         obsTypeName.put(0, "Yver");
         obsTypeFields.put(0,new String[]{
-                FIELD_Clots, FIELD_VisibleAbnormalities, FIELD_Sore, FIELD_Swollen
+                FIELD_LeftFront, FIELD_RightFront, FIELD_LeftBack, FIELD_RightBack, FIELD_Clots, FIELD_Sore, FIELD_VisibleAbnormalities, FIELD_Swollen
         });
 
         obsTypeName.put(1, "Lemmer");

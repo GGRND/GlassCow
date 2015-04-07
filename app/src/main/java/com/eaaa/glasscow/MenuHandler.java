@@ -52,11 +52,8 @@ public class MenuHandler {
 			}
 			break;
         case MENU_OBSERVATION:
-            activity.startObservationActivity(data.getCowID(), data.getObservationTypeId());
+            activity.startObservationActivity(data.getObservationTypeId());
             break;
-	/*	case MENU_NEW_EVENT:
-				activity.startNewEventActivity(data.getTitle(),data.getCowID());
-			break;*/
 		case MENU_INFORMATION:
 			if (activity.scrollView.getSelectedItemPosition() != 0) {
 				activity.scrollView.animate(0, CardScrollView.Animation.NAVIGATION);

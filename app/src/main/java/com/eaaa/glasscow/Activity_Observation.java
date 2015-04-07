@@ -7,11 +7,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -28,16 +26,12 @@ import android.widget.TextView;
 
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowObservation;
-import com.eaaa.glasscow.model.CowValue;
 import com.eaaa.glasscow.service.CowService;
 import com.eaaa.glasscow.service.DatabaseFields;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
 import com.google.android.glass.view.WindowUtils;
-
-import static com.eaaa.glasscow.service.DatabaseFields.TABLE_COW;
-import static com.eaaa.glasscow.service.DatabaseFields.TABLE_OBSERVATION;
 
 public class Activity_Observation extends Activity implements
         GestureDetector.BaseListener {
@@ -50,7 +44,7 @@ public class Activity_Observation extends Activity implements
 
     private static final int FIELD_QUESTION = 0;
 
-    private String id;
+    private String animalId, herdId;
     private int typeId;
     private ArrayList<CowObservation> observations;
     private int currentPage;
@@ -61,6 +55,7 @@ public class Activity_Observation extends Activity implements
 
     private GestureDetector gDetector;
     private CowObservation newObservation=null;
+    private String shortAnimalNumber;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +73,9 @@ public class Activity_Observation extends Activity implements
 
     private void initializeDisplay() {
         Cow cow = Activity_Main.cow;
+        this.herdId = cow.getHerdId();
+        this.animalId = cow.getAnimalId();
+        this.shortAnimalNumber = cow.getShortNumber();
         this.observations = cow.getObservations(typeId);
         Collections.sort(observations, new Comparator<CowObservation>() {
             @Override
@@ -95,7 +93,6 @@ public class Activity_Observation extends Activity implements
     private void unpackBundle() {
         Log.d("GlassCow:observations", "unpackingBundle");
         Bundle bundle = getIntent().getExtras();
-        this.id = bundle.getString("Id");
         this.typeId = bundle.getInt("TypeId");
     }
 
@@ -104,7 +101,7 @@ public class Activity_Observation extends Activity implements
         temp.setText(DatabaseFields.obsTypeName.get(this.typeId));
 
         temp = (TextView) findViewById(R.id.ObsCowID);
-        temp.setText("Cow: " + id);
+        temp.setText("Cow: " + shortAnimalNumber);
         txtFooter = (TextView) findViewById(R.id.ObsFooter);
         txtDateTimeView = (TextView) findViewById(R.id.ObsDateTime);
         txtTextView = (TextView) findViewById(R.id.ObsText);
@@ -154,30 +151,34 @@ public class Activity_Observation extends Activity implements
 
     private void createNewObservation() {
         String[] fields = DatabaseFields.obsTypeFields.get(this.typeId);
-        if (newObservation==null) {
+        if (newObservation == null) {
             newObservation = new CowObservation();
             newObservation.setTypeId(String.valueOf(this.typeId));
-            newObservation.setId(this.id);
+            newObservation.setHerdId(this.herdId);
+            newObservation.setAnimalId(this.animalId);
+            for (int i = 0; i < fields.length; i++) {
+                newObservation.setValue(fields[i],Boolean.FALSE);
+            }
             Activity_Main.cow.addObservation(newObservation);
         }
 
-            String questionText = "";
-            for (int i=0 ; i<fields.length ; i++) {
-                if (i>0)
-                    if (new Long(i/2)*2==i || fields.length<7)
-                        questionText += "\n";
-                    else
-                        questionText += ", ";
-                questionText += "0"+String.valueOf(i+1)+": "+DatabaseFields.getDisplayName(fields[i])+"? ";
-                boolean set = Boolean.TRUE.equals(newObservation.getValue(fields[i]));
-                questionText += set?"Yes ":"No ";
-            }
-            questionText += "\n0"+String.valueOf(fields.length+1)+": "+SAVE+"?";
+        String questionText = "";
+        for (int i = 0; i < fields.length; i++) {
+            if (i > 0)
+                if (new Long(i / 2) * 2 == i || fields.length < 7)
+                    questionText += "\n";
+                else
+                    questionText += ", ";
+            questionText += "0" + String.valueOf(i + 1) + ": " + DatabaseFields.getDisplayName(fields[i]) + "? ";
+            boolean set = Boolean.TRUE.equals(newObservation.getValue(fields[i]));
+            questionText += set ? "Yes " : "No ";
+        }
+        questionText += "\n0" + String.valueOf(fields.length + 1) + ": " + SAVE + "?";
 
-            //Ask missing question
-            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, questionText);
-            startActivityForResult(intent, FIELD_QUESTION);
+        //Ask missing question
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, questionText);
+        startActivityForResult(intent, FIELD_QUESTION);
 
     }
 
@@ -232,7 +233,7 @@ public class Activity_Observation extends Activity implements
                 long days = diff/1000/60/60/24;
                 long hours = (diff-days*1000*60*60*24)/1000/60/60;
                 long minutes = (diff-(days*1000*60*60*24+hours*1000*60*60))/1000/60;
-                DisplayDate = (days>0?(String.valueOf(days)+" dage"):(hours>0?(String.valueOf(hours)+ " timer"):(String.valueOf(minutes)+ " minutter")))+" siden";
+                DisplayDate = (days>1?(String.valueOf(days)+" dage"):(hours>1?(String.valueOf(hours)+ " timer"):(String.valueOf(minutes)+ " minutter")))+" siden";
             } catch (ParseException e) {
                 e.printStackTrace();
             }
