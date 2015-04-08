@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowValue;
-import com.eaaa.glasscow.service.CowService;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
@@ -29,7 +28,7 @@ public class Activity_Events extends Activity implements
 	private static final int MENU_SHOW_MORE = 0;
 	private static final int MENU_BACK = 1;
 
-	private int id;
+	private int shortNumber;
 	private String title;
 	private List<CowValue> events;
 	private int currentPage, totalPages;
@@ -56,11 +55,10 @@ public class Activity_Events extends Activity implements
 	private void unpackBundle() {
 		Log.d("GlassCow:Events", "unpackingBundle");
 		Bundle bundle = getIntent().getExtras();
-		this.id = bundle.getInt("Id");
 		this.title = getString(bundle.getInt("Title"));
 
-//			Cow cow = CowService.getInstance().getCow(id);
 		Cow cow = Activity_Main.cow;
+        this.shortNumber = Integer.valueOf(cow.getShortNumber()).intValue();
 		switch (bundle.getInt("Title")) {
 		case R.string.information:
 			// Shouldn't happen
@@ -84,7 +82,7 @@ public class Activity_Events extends Activity implements
 		temp.setText(title);
 
 		temp = (TextView) findViewById(R.id.CowID);
-		temp.setText("Cow: " + id);
+		temp.setText("Cow: " + Integer.valueOf(shortNumber).intValue());
 		txtFooter = (TextView) findViewById(R.id.footer);
 
 		txtLabelViews = new TextView[3];
@@ -152,7 +150,10 @@ public class Activity_Events extends Activity implements
 		while (i < 3 && item < events.size()) {
 			CowValue temp = events.get(item);
 			imageViews[i].setImageResource(temp.getRingColor());
-			txtLabelViews[i].setText(temp.getKey());
+            String key = temp.getKey();
+            if (key.length()>17)
+                key = key.substring(0,16);
+			txtLabelViews[i].setText(key);
 			txtValueViews[i].setText(temp.getValue());
 			item++;
 			i++;

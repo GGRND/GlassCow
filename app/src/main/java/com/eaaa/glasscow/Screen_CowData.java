@@ -105,7 +105,7 @@ public class Screen_CowData {
 	public void updateCow(String animalShortNumber, String animalId, List<CowValue> values, List<CowValue> events) {
         this.animalShortNumber = animalShortNumber;
         this.animalId = animalId;
-        txtID.setText("Cow: " + animalShortNumber);
+        txtID.setText("Cow: " + Integer.valueOf(animalShortNumber).intValue());
 		this.values = values;
 		this.hasEvents = (events != null);
 		this.currentPage = 0;

@@ -48,11 +48,16 @@ public class MenuHandler {
 	public static int onMainMenuItemSelected(Activity_Main activity, Screen_CowData data, int id) {
 		Log.d("GlassCow:MenuHandler", "menu_id: " + id);
 		switch (id) {
-		case MENU_EVENTS:
-			if (data.hasMore()) {
-				data.nextPage();
-			}
-			break;
+        case MENU_MORE:
+                if (data.hasMore()) {
+                    data.nextPage();
+                }
+                break;
+        case MENU_EVENTS:
+                if(data.hasEvents()){
+                    activity.startEventActivity(data.getTitle());
+                }
+                break;
         case MENU_OBSERVATION:
             activity.startObservationActivity(data.getObservationTypeId());
             break;

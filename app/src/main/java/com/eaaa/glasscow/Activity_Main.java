@@ -309,11 +309,10 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		return views;
 	}
 
-    public void startEventActivity(int title, String id) {
+    public void startEventActivity(int title) {
         Intent intent = new Intent(this, Activity_Events.class);
         Bundle bundle = new Bundle();
         bundle.putInt("Title", title);
-        bundle.putString("Id", id);
         intent.putExtras(bundle);
         startActivity(intent);
     }
@@ -477,7 +476,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 			Screen_CowData data = (Screen_CowData) scrollAdapter
 					.getItem(scrollView.getSelectedItemPosition());
 			if (data.hasEvents()) {
-				startEventActivity(data.getTitle(), data.getAnimalShortNumber());
+				startEventActivity(data.getTitle());
 			}
 		} else if (g == Gesture.LONG_PRESS) {
 			AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);

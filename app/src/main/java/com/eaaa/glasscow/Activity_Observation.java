@@ -101,7 +101,7 @@ public class Activity_Observation extends Activity implements
         temp.setText(DatabaseFields.obsTypeName.get(this.typeId));
 
         temp = (TextView) findViewById(R.id.ObsCowID);
-        temp.setText("Cow: " + shortAnimalNumber);
+        temp.setText("Cow: " + Integer.valueOf(shortAnimalNumber).intValue());
         txtFooter = (TextView) findViewById(R.id.ObsFooter);
         txtDateTimeView = (TextView) findViewById(R.id.ObsDateTime);
         txtTextView = (TextView) findViewById(R.id.ObsText);
@@ -231,8 +231,8 @@ public class Activity_Observation extends Activity implements
                 Date today = new Date();
                 long diff = today.getTime() - obsDate.getTime();
                 long days = diff/1000/60/60/24;
-                long hours = (diff-days*1000*60*60*24)/1000/60/60;
-                long minutes = (diff-(days*1000*60*60*24+hours*1000*60*60))/1000/60;
+                long hours = (diff-days*1000*60*60*24)/1000/60/60+24*days;
+                long minutes = (diff-(days*1000*60*60*24+hours*1000*60*60))/1000/60+((24*days)+hours)*60;
                 DisplayDate = (days>1?(String.valueOf(days)+" dage"):(hours>1?(String.valueOf(hours)+ " timer"):(String.valueOf(minutes)+ " minutter")))+" siden";
             } catch (ParseException e) {
                 e.printStackTrace();
