@@ -224,14 +224,7 @@ public class RemoteDatabase {
         new postSecureRequestTask() {
             @Override
             void callBack(String json) throws JSONException {
-                //Log.v("DEBUG", result);
-
-
                 JSONObject main = new JSONObject(json);
-
-                //JSONArray array = main.getJSONArray("value");
-                //main = array.getJSONObject(0);
-
                 JSONArray cows = main.getJSONArray("value");
 
                 db.delete(TABLE_COW,null,new String[]{});
@@ -248,13 +241,10 @@ public class RemoteDatabase {
                     if (result==-1)
                         Log.d("ERROR","Insert "+animalShortNumber+" failed!");
                     Log.d("GlassCow:Cow", "Id: "+animalShortNumber);
-
                 }
-
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
-
 
     /**
      *

@@ -20,6 +20,7 @@ import com.eaaa.glasscow.AsyncCowDataChange.AsyncCowResponse;
 import com.eaaa.glasscow.Screen_CowData.DataType;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.service.CowService;
+import com.eaaa.glasscow.tools.CowScrollView;
 import com.eaaa.glasscow.tools.CowScrollViewAdapter;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
@@ -51,6 +52,15 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 	private GestureDetector gDetector;
 
 	private int page = 0;
+    private Menu menu = null;
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
 
     public class Configuration {
 
@@ -105,11 +115,14 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
             this.rst_template = readRawTextFile(R.raw.rst_template);
             this.Username = "googleglas";
             this.Password = "63625";
-            this.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
+            this.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed";
+            //devtest
             //conf.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
             //conf.Endpoint = "https://idp.dlbr.dk/adfs/services/trust/13/usernamemixed"; //prod
-            this.Host = "devtest-dcf-odata.vfltest.dk"; //devtest
-            this.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/"; //devtest
+            this.Host = "devtest-dcf-odata.vfltest.dk";
+            //devtest
+            this.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
+            //devtest
             //conf.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
             //this.TrustedThumbprint = "38604472D35600695F4045AA62D15F4C229E1820";
             this.AgriBusinessId = "54581";
@@ -267,7 +280,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		scrollAdapter = new CowScrollViewAdapter(createViews());
-		scrollView = new CardScrollView(this);
+		scrollView = new CowScrollView(this);
 		scrollView.setAdapter(scrollAdapter);
 		setContentView(scrollView);
 
@@ -397,6 +410,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 	@Override
 	public boolean onCreatePanelMenu(int featureId, Menu menu) {
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+            this.menu = menu;
 			Log.d("GlassCow:Main",
 					"onCreatePanelMenu" + scrollView.getSelectedItemPosition());
 			// getMenuInflater().inflate(R.menu.main, menu);

@@ -19,6 +19,8 @@ public class MenuHandler {
 	private static final int MENU_NEW_EVENT = 8;
 
 	public static void updateMenu(Activity_Main activity, Menu menu, Screen_CowData data) {
+        if (menu==null)
+            return;
 		Log.d("GlassCow:MenuHandler", "updating Menu " + activity.scrollView.getSelectedItemPosition());
 		menu.clear();
 
