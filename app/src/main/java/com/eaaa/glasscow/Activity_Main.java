@@ -53,6 +53,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
 	private int page = 0;
     private Menu menu = null;
+    private boolean newlyCreated;
 
     public Menu getMenu() {
         return menu;
@@ -113,19 +114,21 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
         private void LoadDefaultPreferences() {
             this.rst_template = readRawTextFile(R.raw.rst_template);
+            this.AgriBusinessId = "54581";
+
+            //devtest system
             this.Username = "googleglas";
             this.Password = "63625";
             this.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed";
-            //devtest
-            //conf.Endpoint = "https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed"; //devtest
-            //conf.Endpoint = "https://idp.dlbr.dk/adfs/services/trust/13/usernamemixed"; //prod
             this.Host = "devtest-dcf-odata.vfltest.dk";
-            //devtest
             this.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
-            //devtest
-            //conf.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
-            //this.TrustedThumbprint = "38604472D35600695F4045AA62D15F4C229E1820";
-            this.AgriBusinessId = "54581";
+
+            //production system
+            this.Username = "XXXXX";
+            this.Password = "YYYYY";
+            this.Endpoint = "https://idp.dlbr.dk/adfs/services/trust/13/usernamemixed";
+            this.Host = "prod-dcf-odata.dlbr.dk";
+            this.Audience = "https://prod-dcf-odata.dlbr.dk/DCFOData/";
         }
 
         public void LoadSharedPreferences()
@@ -160,7 +163,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
         }
 
         //Sample:
-        //{Username:"googleglas",Password:"63625",Endpoint:"https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed",Audience:"https://devtest-dcf-odata.vfltest.dk/DCFOData/",AgriBusinessId:"54581",HerdId:"6362512",Host:"devtest-dcf-odata.vfltest.dk"}
+        //{Username:"googleglas",Password:"63625",Endpoint:"https://si-idp.vfltest.dk/adfs/services/trust/13/usernamemixed",Audience:"https://devtest-dcf-odata.vfltest.dk/DCFOData/",AgriBusinessId:"54581",Host:"devtest-dcf-odata.vfltest.dk"}
         public void SetConfiguration(String json)
         {
             SharedPreferences.Editor editor = prefs.edit();
@@ -219,6 +222,9 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
             //Persist changes in shared preferences
             editor.commit();
+
+            //Load configuration
+            LoadSharedPreferences();
         }
 
         public Configuration(Activity_Main ctx) {
@@ -258,14 +264,18 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
     protected void onStart() {
         super.onStart();
 
-        CowService.getInstance(this).open();
+        if (newlyCreated) {
+            CowService.getInstance(this).open();
 
-        Log.d("GlassCow:Main", "Activity_Start");
-        Cow cow = CowService.getInstance(this).getLastUsedCow();
-        if (cow != null) {
-            asyncCowResponse(cow);
-        } else {
-            identifyCowWithVoice();
+            Log.d("GlassCow:Main", "Activity_Start");
+            Cow cow = CowService.getInstance(this).getLastUsedCow();
+            if (cow != null) {
+                asyncCowResponse(cow);
+            } else {
+                identifyCowWithVoice();
+            }
+
+            newlyCreated = false;
         }
     }
 
@@ -273,6 +283,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.newlyCreated = true;
         CowService.getInstance(this);
         conf = new Configuration(this);
 
@@ -366,6 +377,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
             }
             else
             {
+                identifyCowWithVoice();
 				Log.d("GlassCow:Main", "Cow_update: Invalid Input");
 			}
 		}

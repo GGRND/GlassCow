@@ -34,8 +34,11 @@ import      java.util.concurrent.Executor;
 public class RemoteDatabase {
 
     private static RemoteDatabase instance = null;
-    private static String token = null;
+    private static String token = null, Username = null, Password = null;
     private static Activity_Main context;
+    private static String Endpoint;
+    private static String Audience;
+    private static String rst;
 
     class PriorityExecutor implements Executor {
         private final int priority;
@@ -64,18 +67,19 @@ public class RemoteDatabase {
             try {
                 return postSecureRequest(parameters[0]);
             } catch (IOException e) {
-                return "Unable execute postSecureRequestTask: "+e.getMessage();
+                return null;
+                //return "Unable execute postSecureRequestTask: "+e.getMessage();
             }
         }
 
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            try {
-                callBack(result);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                try {
+                    callBack(result);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
         }
 
         //Parameters: String url, String body, HeaderName1, HeaderValue1, HeaderName2, HeaderValue2 ...
@@ -140,13 +144,17 @@ public class RemoteDatabase {
             ArrayList<String> params = new ArrayList<String>();
             Activity_Main.Configuration conf = context.getConfiguration();
 
-            //Add URL to params
-            params.add(conf.get_Endpoint());
-
-            //Add Body to params
+            //Load configuration
+            RemoteDatabase.Endpoint = conf.get_Endpoint();
+            RemoteDatabase.Username = conf.get_Username();
+            RemoteDatabase.Password = conf.get_Password();
+            RemoteDatabase.Audience = conf.get_Audience();
             String template = conf.get_rst_template();
-            String rst = String.format(template, conf.get_Endpoint(), conf.get_Username(), conf.get_Password(), conf.get_Audience());
-            params.add(rst);
+            RemoteDatabase.rst = String.format(template, RemoteDatabase.Endpoint, RemoteDatabase.Username, RemoteDatabase.Password, RemoteDatabase.Audience);
+
+            //Add url and body params
+            params.add(RemoteDatabase.Endpoint);
+            params.add(RemoteDatabase.rst);
 
             //Add header to params
             params.add("Content-Type");
@@ -164,7 +172,12 @@ public class RemoteDatabase {
             //Pull SAML from returned body
             int startPosSAML = tokenResponseBody.indexOf("<saml:Assertion");
             int endPosSAML = tokenResponseBody.indexOf("</saml:Assertion>") + 17;
-            String result = tokenResponseBody.substring(startPosSAML, endPosSAML);
+
+            String result;
+            if (startPosSAML>=0 && endPosSAML>=0)
+                result = tokenResponseBody.substring(startPosSAML, endPosSAML);
+            else
+                result = null;
 
             //return SAML token
             RemoteDatabase.token = result;
@@ -188,14 +201,25 @@ public class RemoteDatabase {
        RemoteDatabase.context = context;
    }
 
+    private boolean isTokenRequestNeeded() {
+        Activity_Main.Configuration conf = context.getConfiguration();
+
+        return (token == null) ||
+                !(RemoteDatabase.Endpoint.equals(conf.get_Endpoint())) ||
+                !(RemoteDatabase.Username.equals(conf.get_Username())) ||
+                !(RemoteDatabase.Password.equals(conf.get_Password())) ||
+                !(RemoteDatabase.Audience.equals(conf.get_Audience()));
+    }
+
     public void updateCattleDatabase(final SQLiteDatabase db) {
 
-        if (token==null)
+        if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
                 @Override
                 void callBack(String result) {
-                    doUpdateCattleDatabase(db);
+                    if (!isTokenRequestNeeded())
+                        doUpdateCattleDatabase(db);
                 }
             }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
         }
@@ -228,6 +252,7 @@ public class RemoteDatabase {
                 JSONArray cows = main.getJSONArray("value");
 
                 db.delete(TABLE_COW,null,new String[]{});
+                db.delete(TABLE_OBSERVATION,null,new String[]{});
 
                 for (int i=0; i<cows.length(); i++) {
                     JSONObject cow = cows.getJSONObject(i);
@@ -250,12 +275,13 @@ public class RemoteDatabase {
      *
      */
     public void sendObservations(final SQLiteDatabase db, final ArrayList<CowObservation> observations) {
-        if (token==null)
+        if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
                 @Override
                 void callBack(String result) {
-                    doSendObservations(db, observations);
+                    if (!isTokenRequestNeeded())
+                        doSendObservations(db, observations);
                 }
             }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
         }
