@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.Configuration;
 import com.eaaa.glasscow.model.CowObservation;
 
 import org.json.JSONArray;
@@ -142,7 +143,7 @@ public class RemoteDatabase {
         protected String doInBackground(ArrayList<String>... parameters) {
 
             ArrayList<String> params = new ArrayList<String>();
-            Activity_Main.Configuration conf = context.getConfiguration();
+            Configuration conf = context.getConfiguration();
 
             //Load configuration
             RemoteDatabase.Endpoint = conf.get_Endpoint();
@@ -202,7 +203,7 @@ public class RemoteDatabase {
    }
 
     private boolean isTokenRequestNeeded() {
-        Activity_Main.Configuration conf = context.getConfiguration();
+        Configuration conf = context.getConfiguration();
 
         return (token == null) ||
                 !(RemoteDatabase.Endpoint.equals(conf.get_Endpoint())) ||
@@ -231,7 +232,7 @@ public class RemoteDatabase {
 
     private void doUpdateCattleDatabase(final SQLiteDatabase db)
     {
-        Activity_Main.Configuration conf = context.getConfiguration();
+        Configuration conf = context.getConfiguration();
 
         //get cattle info
         ArrayList<String> params = new ArrayList<String>();
@@ -292,7 +293,7 @@ public class RemoteDatabase {
     }
 
     private void doSendObservations(final SQLiteDatabase db, final ArrayList<CowObservation> observations) {
-        Activity_Main.Configuration conf = context.getConfiguration();
+        Configuration conf = context.getConfiguration();
 
         //Initialize first observation to sent
         int i;
