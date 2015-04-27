@@ -106,7 +106,7 @@ public class Activity_Events extends Activity implements
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
 			Log.d("GlassCow:Main", "onCreatePanelMenu");
 			menu.clear();
-			menu.add(Menu.NONE, MENU_SHOW_MORE, Menu.NONE, "Show More");
+			menu.add(Menu.NONE, MENU_SHOW_MORE, Menu.NONE, "More");
 			menu.add(Menu.NONE, MENU_BACK, Menu.NONE, "Back");
 			return true;
 		}

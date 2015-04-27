@@ -214,7 +214,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
                 Intent intent = new Intent(this, ScanBarCodeActivity.class);
                 startActivityForResult(intent, SCAN_REQUEST);
             }
-            if (spokenText.equals("notice"))
+            else if (spokenText.equals("notice"))
             {
                 identifyObservation();
             }
