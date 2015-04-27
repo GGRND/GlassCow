@@ -8,7 +8,7 @@ import java.util.HashMap;
  * Created by morten on 02/04/15.
  */
 public class CowObservation {
-    private String observationId, animalId, typeId, herdId, observationDate;
+    private String observationId, animalId, shortAnimalNumber, typeId, herdId, observationDate;
     private HashMap<String, Boolean> valueMap = new HashMap<String, Boolean>();
 
     public void setObservationId(String observationId) {
@@ -21,6 +21,14 @@ public class CowObservation {
 
     public String getAnimalId() {
         return animalId;
+    }
+
+    public String getShortAnimalNumber() {
+        return shortAnimalNumber;
+    }
+
+    public void setShortAnimalNumber(String shortAnimalNumber) {
+        this.shortAnimalNumber = shortAnimalNumber;
     }
 
     public void setAnimalId(String cowid) {

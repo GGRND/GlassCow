@@ -1,14 +1,5 @@
 package com.eaaa.glasscow;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +15,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.R;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowObservation;
 import com.eaaa.glasscow.service.CowService;
@@ -33,22 +26,25 @@ import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
 import com.google.android.glass.view.WindowUtils;
 
-public class Activity_Observation extends Activity implements
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+
+public class Activity_AllObservations extends Activity implements
         GestureDetector.BaseListener {
 
     private static final int MENU_SHOW_MORE = 0;
     private static final int MENU_BACK = 1;
-    private static final int MENU_NEW = 2;
-
-    private static final String SAVE = "Save";
-
+    private static final int MENU_SELECT = 2;
     private static final int FIELD_QUESTION = 0;
 
-    private String animalId, herdId;
-    private int typeId;
     private ArrayList<CowObservation> observations;
     private int currentPage;
-
     private TextView txtFooter;
     private ImageView imageView;
     private TextView txtDateTimeView, txtTextView;
@@ -63,7 +59,6 @@ public class Activity_Observation extends Activity implements
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.observation);
-        unpackBundle();
         initializeDisplay();
         initElements();
         nextPage();
@@ -71,12 +66,9 @@ public class Activity_Observation extends Activity implements
         gDetector = new GestureDetector(this).setBaseListener(this);
     }
 
+
     private void initializeDisplay() {
-        Cow cow = Activity_Main.cow;
-        this.herdId = cow.getHerdId();
-        this.animalId = cow.getAnimalId();
-        this.shortAnimalNumber = cow.getShortNumber();
-        this.observations = cow.getObservations(typeId);
+        this.observations = CowService.getInstance().getObservations();
         Collections.sort(observations, new Comparator<CowObservation>() {
             @Override
             public int compare(CowObservation obs1, CowObservation obs2) {
@@ -90,18 +82,7 @@ public class Activity_Observation extends Activity implements
         Log.d("GlassCow:observations", "#observations: " + observations.size());
     }
 
-    private void unpackBundle() {
-        Log.d("GlassCow:observations", "unpackingBundle");
-        Bundle bundle = getIntent().getExtras();
-        this.typeId = bundle.getInt("TypeId");
-    }
-
     private void initElements() {
-        TextView temp = (TextView) findViewById(R.id.ObsTitle);
-        temp.setText(DatabaseFields.obsTypeName.get(this.typeId));
-
-        temp = (TextView) findViewById(R.id.ObsCowID);
-        temp.setText("Cow: " + Integer.valueOf(shortAnimalNumber).intValue());
         txtFooter = (TextView) findViewById(R.id.ObsFooter);
         txtDateTimeView = (TextView) findViewById(R.id.ObsDateTime);
         txtTextView = (TextView) findViewById(R.id.ObsText);
@@ -113,8 +94,8 @@ public class Activity_Observation extends Activity implements
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
             Log.d("GlassCow:Main", "onCreatePanelMenu");
             menu.clear();
-            menu.add(Menu.NONE, MENU_NEW, Menu.NONE, "New");
             menu.add(Menu.NONE, MENU_SHOW_MORE, Menu.NONE, "More");
+            menu.add(Menu.NONE, MENU_SELECT, Menu.NONE, "Select cow");
             menu.add(Menu.NONE, MENU_BACK, Menu.NONE, "Back");
             return true;
         }
@@ -135,83 +116,23 @@ public class Activity_Observation extends Activity implements
         Log.d("GlassCow:Main", "onMenuItemSelected");
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
             switch (item.getItemId()) {
-                case MENU_NEW:
-                    createNewObservation();
-                    break;
                 case MENU_SHOW_MORE:
                     nextPage();
                     break;
                 case MENU_BACK:
                     finish();
                     break;
+                case MENU_SELECT:
+                    Bundle conData = new Bundle();
+                    conData.putString("COW_NUMBER", this.shortAnimalNumber);
+                    Intent intent = new Intent();
+                    intent.putExtras(conData);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                    break;
             }
         }
         return super.onMenuItemSelected(featureId, item);
-    }
-
-    private void createNewObservation() {
-        String[] fields = DatabaseFields.obsTypeFields.get(this.typeId);
-        if (newObservation == null) {
-            newObservation = new CowObservation();
-            newObservation.setTypeId(String.valueOf(this.typeId));
-            newObservation.setHerdId(this.herdId);
-            newObservation.setAnimalId(this.animalId);
-            newObservation.setShortAnimalNumber(this.shortAnimalNumber);
-            for (int i = 0; i < fields.length; i++) {
-                newObservation.setValue(fields[i],Boolean.FALSE);
-            }
-            Activity_Main.cow.addObservation(newObservation);
-        }
-
-        String questionText = "";
-        for (int i = 0; i < fields.length; i++) {
-            if (i > 0)
-                if (new Long(i / 2) * 2 == i || fields.length < 7)
-                    questionText += "\n";
-                else
-                    questionText += ", ";
-            questionText += "0" + String.valueOf(i + 1) + ": " + DatabaseFields.getDisplayName(fields[i]) + "? ";
-            boolean set = Boolean.TRUE.equals(newObservation.getValue(fields[i]));
-            questionText += set ? "Yes " : "No ";
-        }
-        questionText += "\n0" + String.valueOf(fields.length + 1) + ": " + SAVE + "?";
-
-        //Ask missing question
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, questionText);
-        startActivityForResult(intent, FIELD_QUESTION);
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == FIELD_QUESTION && resultCode == RESULT_OK) {
-            Log.d("GlassCow:Observation", "Answer received");
-            List<String> results = data
-                    .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            String spokenText = results.get(0);
-            String[] fields = DatabaseFields.obsTypeFields.get(this.typeId);
-            long spokenNumber = 0;
-            try {
-                spokenNumber = new Long(spokenText).longValue();
-            } catch (Exception e) {
-                spokenNumber = 0;
-            }
-            if (spokenText.equalsIgnoreCase(SAVE) || new Long(fields.length+1).equals(spokenNumber)) {
-                //Store created new Observation
-                CowService.getInstance().insertObservation(newObservation);
-                newObservation=null;
-                initializeDisplay();
-                nextPage();
-            } else {
-                for (int i=0 ; i<fields.length ; i++) {
-                    if (spokenText.equalsIgnoreCase(DatabaseFields.getDisplayName(fields[i])) ||
-                            new Long(i+1).equals(spokenNumber))
-                        newObservation.setValue(fields[i], newObservation.getValue(fields[i]) != Boolean.TRUE);
-                }
-                createNewObservation();
-            }
-        }
     }
 
     private void nextPage() {
@@ -240,6 +161,12 @@ public class Activity_Observation extends Activity implements
             }
             txtDateTimeView.setText(DisplayDate);
             txtTextView.setText(temp.getDisplayText());
+
+            TextView tempTxtView = (TextView) findViewById(R.id.ObsTitle);
+            tempTxtView.setText(DatabaseFields.obsTypeName.get(Integer.valueOf(temp.getTypeId()).intValue()));
+            tempTxtView = (TextView) findViewById(R.id.ObsCowID);
+            this.shortAnimalNumber = temp.getShortAnimalNumber();
+            tempTxtView.setText("Cow: " + Integer.valueOf(this.shortAnimalNumber).intValue());
         } else {
             imageView.setImageResource(R.drawable.ring_black);
             txtDateTimeView.setText("");

@@ -25,6 +25,7 @@ public class DatabaseFields
     public static final String FIELD_OBS_ID = "obs_id";
     public static final String TABLE_OBSERVATION = "observation";
     public static final String FIELD_AnimalId = "AnimalId";
+    public static final String FIELD_ShortAnimalNumber = "ShortAnimalNumber";
     public static final String FIELD_HerdId = "HerdId";
     public static final String FIELD_Sent = "Sent";
     public static final String FIELD_ObservationTypeId = "ObservationTypeId"; //0:Yver(Information), 1:Klove og Lemmer(Health), 2:Brunst(Reproduction)

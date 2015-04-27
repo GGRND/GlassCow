@@ -84,6 +84,41 @@ public class CowService {
 		}
 	}
 
+    public ArrayList<CowObservation> getObservations() {
+        ArrayList<CowObservation> result = new ArrayList<CowObservation>();
+        Cursor cursorContent = cDB.getDb().rawQuery("SELECT * FROM "+TABLE_OBSERVATION,new String[]{});
+        cursorContent.moveToFirst();
+        while(!cursorContent.isAfterLast()) {
+            CowObservation obs = new CowObservation();
+            result.add(obs);
+            for (int i=0 ; i<cursorContent.getColumnCount(); i++) {
+                String columnName = cursorContent.getColumnName(i);
+                String value = cursorContent.getString(i);
+                if (columnName.equals(DatabaseFields.FIELD_AnimalId))
+                    obs.setAnimalId(value);
+                else if (columnName.equals(DatabaseFields.FIELD_ShortAnimalNumber))
+                    obs.setShortAnimalNumber(value);
+                else if (columnName.equals(DatabaseFields.FIELD_HerdId))
+                    obs.setHerdId(value);
+                else if (columnName.equals(DatabaseFields.FIELD_ObservationDate))
+                    obs.setObservationDate(value);
+                else if (columnName.equals(DatabaseFields.FIELD_OBS_ID))
+                    obs.setObservationId(value);
+                else if (columnName.equals(DatabaseFields.FIELD_ObservationTypeId))
+                    obs.setTypeId(value);
+                else if (value!=null && (value.equalsIgnoreCase("yes") || value.equals("1") || value.equalsIgnoreCase("true")))
+                    obs.setValue(columnName,true);
+            }
+            cursorContent.moveToNext();
+            String[] fields = DatabaseFields.obsTypeFields.get(new Integer(obs.getTypeId()).intValue());
+            for (int i = 0; i < fields.length; i++) {
+                if (obs.getValue(fields[i])==null)
+                    obs.setValue(fields[i],false);
+            }
+        }
+        return result;
+    }
+
     private void loadObservations(Cow cow) {
         String cow_id = cow.getAnimalId();
         Cursor cursorContent = cDB.getDb().rawQuery("SELECT * FROM "+TABLE_OBSERVATION+" WHERE "+ FIELD_AnimalId +"=?",new String[]{cow_id});
@@ -99,6 +134,8 @@ public class CowService {
                 String value = cursorContent.getString(i);
                 if (columnName.equals(DatabaseFields.FIELD_AnimalId))
                     obs.setAnimalId(value);
+                else if (columnName.equals(DatabaseFields.FIELD_ShortAnimalNumber))
+                    obs.setShortAnimalNumber(value);
                 else if (columnName.equals(DatabaseFields.FIELD_ObservationDate))
                     obs.setObservationDate(value);
                 else if (columnName.equals(DatabaseFields.FIELD_OBS_ID))
@@ -138,6 +175,7 @@ public class CowService {
         String[] fields = DatabaseFields.obsTypeFields.get(new Integer(newObs.getTypeId()).intValue());
         ContentValues values = new ContentValues();
         values.put(DatabaseFields.FIELD_AnimalId, newObs.getAnimalId());
+        values.put(DatabaseFields.FIELD_ShortAnimalNumber, newObs.getShortAnimalNumber());
         values.put(DatabaseFields.FIELD_HerdId, newObs.getHerdId());
         values.put(DatabaseFields.FIELD_ObservationTypeId, newObs.getTypeId());
         for (int f = 0; f < fields.length; f++) {

@@ -14,9 +14,10 @@ public class MenuHandler {
 	private static final int MENU_INFORMATION = 3;
 	private static final int MENU_HEALTH = 4;
 	private static final int MENU_REPRODUCTION = 5;
-	private static final int MENU_IDENTIFY = 6;
-	private static final int MENU_EXIT = 7;
-	private static final int MENU_NEW_EVENT = 8;
+    private static final int MENU_IDENTIFY_COW = 6;
+    //private static final int MENU_IDENTIFY_OBSERVATION = 7;
+	private static final int MENU_EXIT = 8;
+	private static final int MENU_NEW_EVENT = 9;
 
 	public static void updateMenu(Activity_Main activity, Menu menu, Screen_CowData data) {
         if (menu==null)
@@ -40,8 +41,9 @@ public class MenuHandler {
             menu.add(Menu.NONE, MENU_REPRODUCTION, Menu.NONE, R.string.reproduction);
         }
 
-        menu.add(Menu.NONE, MENU_IDENTIFY, Menu.NONE, R.string.menu_identify);
+        menu.add(Menu.NONE, MENU_IDENTIFY_COW, Menu.NONE, R.string.menu_identify_cow);
         menu.add(Menu.NONE, MENU_OBSERVATION, Menu.NONE, R.string.menu_observation);
+        //menu.add(Menu.NONE, MENU_IDENTIFY_OBSERVATION, Menu.NONE, R.string.menu_identify_observation);
 		//menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit);
 	}
 
@@ -77,9 +79,12 @@ public class MenuHandler {
 				activity.scrollView.animate(2, CardScrollView.Animation.NAVIGATION);
 			}
 			return 2;
-		case MENU_IDENTIFY:
-			activity.identifyCowWithVoice();
-			break;
+        case MENU_IDENTIFY_COW:
+                activity.identifyCowWithVoice();
+                break;
+        /*case MENU_IDENTIFY_OBSERVATION:
+                activity.identifyObservation();
+                break;*/
 		case MENU_EXIT:
 			activity.finish();
 			break;

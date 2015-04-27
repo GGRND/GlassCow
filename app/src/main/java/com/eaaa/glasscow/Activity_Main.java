@@ -39,6 +39,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
     private static final int SPEECH_REQUEST = 0;
     private static final int SCAN_REQUEST = 1;
+    private static final int COW_BY_OBSERVATION_REQUEST = 2;
 	//private static final int NEW_EVENT = 1;
 	
 	public static Cow cow;
@@ -170,17 +171,31 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		Log.d("GlassCow:Main", "***start NewEventActivity***" + id + " " + title);
 	}
 
-	public void identifyCowWithVoice() {
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Cow number?\n(Number/Update/Settings)");
-		startActivityForResult(intent, SPEECH_REQUEST);
-	}
+    public void identifyCowWithVoice() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Cow number?\n(Number/Notice/Update/Settings)");
+        startActivityForResult(intent, SPEECH_REQUEST);
+    }
+
+    public void identifyObservation() {
+        Intent intent = new Intent(this, Activity_AllObservations.class);
+        startActivityForResult(intent, COW_BY_OBSERVATION_REQUEST);
+        Log.d("GlassCow:Main", "*** start AllObservations ***");
+    }
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == SPEECH_REQUEST && resultCode == RESULT_OK)
+
+        if (requestCode == COW_BY_OBSERVATION_REQUEST && resultCode == RESULT_OK) {
+            Log.d("GlassCow:Main", "Handling COW_BY_OBSERVATION_RESPONSE");
+            Bundle res = data.getExtras();
+            String cow_number_str = res.getString("COW_NUMBER");
+            int cow_number = Integer.valueOf(cow_number_str).intValue();
+            Log.d("GlassCow:Main", "Cow_update: NEW COW ID: " + cow_number);
+            new AsyncCowDataChange(Activity_Main.this, cow_number).execute();
+        }
+        else if (requestCode == SPEECH_REQUEST && resultCode == RESULT_OK)
         {
-			Log.d("GlassCow:Main", "Handling Voice Input");
 			List<String> results = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 			String spokenText = results.get(0);
@@ -198,6 +213,10 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
             {
                 Intent intent = new Intent(this, ScanBarCodeActivity.class);
                 startActivityForResult(intent, SCAN_REQUEST);
+            }
+            if (spokenText.equals("notice"))
+            {
+                identifyObservation();
             }
             else
             {

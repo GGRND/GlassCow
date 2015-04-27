@@ -45,6 +45,7 @@ public class CowDatabase extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBSERVATION);
         db.execSQL("CREATE TABLE "+TABLE_OBSERVATION+"( "+FIELD_OBS_ID+" integer primary key autoincrement not null, " +
                 FIELD_AnimalId +" TEXT, "+
+                FIELD_ShortAnimalNumber +" TEXT, "+
                 FIELD_HerdId +" TEXT, "+
                         FIELD_ObservationTypeId+" TEXT, "+
                         FIELD_ObservationDate+" DATETIME DEFAULT CURRENT_TIMESTAMP, "+
