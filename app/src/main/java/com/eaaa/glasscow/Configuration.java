@@ -2,6 +2,8 @@ package com.eaaa.glasscow;
 
 import android.content.SharedPreferences;
 
+import com.eaaa.glasscow.*;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +17,7 @@ public class Configuration {
 
     private final static String PREF_NAME = "Configuration";
     private SharedPreferences prefs  = null;
-    private Activity_Main context = null;
+    private com.eaaa.glasscow.Activity_Main context = null;
 
     private final static String rst_template_key = "rst_template";
     private String rst_template;
@@ -72,11 +74,12 @@ public class Configuration {
         this.Audience = "https://devtest-dcf-odata.vfltest.dk/DCFOData/";
 
         //production system
-        this.Username = "XXXXX";
+       /* this.Username = "XXXXX";
         this.Password = "YYYYY";
         this.Endpoint = "https://idp.dlbr.dk/adfs/services/trust/13/usernamemixed";
         this.Host = "prod-dcf-odata.dlbr.dk";
         this.Audience = "https://prod-dcf-odata.dlbr.dk/DCFOData/";
+        */
     }
 
     public void LoadSharedPreferences()
@@ -175,7 +178,7 @@ public class Configuration {
         LoadSharedPreferences();
     }
 
-    private Configuration(Activity_Main ctx) {
+    private Configuration(com.eaaa.glasscow.Activity_Main ctx) {
         this.context = ctx;
         this.prefs = this.context.getSharedPreferences(PREF_NAME, context.MODE_MULTI_PROCESS);
 
@@ -183,7 +186,7 @@ public class Configuration {
         LoadSharedPreferences();
     }
 
-    static public Configuration get_Instance(Activity_Main ctx) {
+    static public Configuration get_Instance(com.eaaa.glasscow.Activity_Main ctx) {
         if (instance==null)
             instance =  new Configuration(ctx);
         return instance;

@@ -1,13 +1,10 @@
 package com.eaaa.glasscow.tools;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.eaaa.glasscow.Activity_Main;
-import com.eaaa.glasscow.MenuHandler;
-import com.eaaa.glasscow.Screen_CowData;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollView;
 

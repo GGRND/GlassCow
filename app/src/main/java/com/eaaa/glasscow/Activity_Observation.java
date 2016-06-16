@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eaaa.glasscow.*;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowObservation;
 import com.eaaa.glasscow.service.CowService;
@@ -54,7 +55,7 @@ public class Activity_Observation extends Activity implements
     private TextView txtDateTimeView, txtTextView;
 
     private GestureDetector gDetector;
-    private CowObservation newObservation=null;
+    private CowObservation newObservation = null;
     private String shortAnimalNumber;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class Activity_Observation extends Activity implements
     }
 
     private void initializeDisplay() {
-        Cow cow = Activity_Main.cow;
+        Cow cow = com.eaaa.glasscow.Activity_Main.cow;
         this.herdId = cow.getHerdId();
         this.animalId = cow.getAnimalId();
         this.shortAnimalNumber = cow.getShortNumber();
@@ -160,7 +161,7 @@ public class Activity_Observation extends Activity implements
             for (int i = 0; i < fields.length; i++) {
                 newObservation.setValue(fields[i],Boolean.FALSE);
             }
-            Activity_Main.cow.addObservation(newObservation);
+            com.eaaa.glasscow.Activity_Main.cow.addObservation(newObservation);
         }
 
         String questionText = "";

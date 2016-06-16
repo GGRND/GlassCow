@@ -20,7 +20,5 @@ android {
 
 dependencies {
     compile files('libs/scanditsdk-android-4.4.1.jar')
-    compile files('libs/lib.zip')
     compile 'com.android.support:support-v4:21.0.3'
-    compile files('/Users/morten/AndroidStudioProjects/GlassCow/libs/scanditsdk-android-4.4.1.jar')
 }

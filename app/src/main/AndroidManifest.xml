@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eaaa.glasscow"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="19"
@@ -19,15 +19,18 @@
     <android:uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher" >
+        android:icon="@drawable/ic_launcher">
         <activity
             android:name=".Activity_Main"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="com.google.android.glass.action.VOICE_TRIGGER" />
             </intent-filter>
 
@@ -39,9 +42,10 @@
         <activity android:name=".Activity_NewEvent" />
         <activity android:name=".Activity_Observation" />
         <activity android:name=".Activity_AllObservations" />
+        <activity android:name=".Identify_CowNumber" />
         <activity
             android:name=".ScanBarCodeActivity"
-            android:label="@string/title_activity_scan_bar_code" >
+            android:label="@string/title_activity_scan_bar_code">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eaaa.glasscow.Activity_Main" />

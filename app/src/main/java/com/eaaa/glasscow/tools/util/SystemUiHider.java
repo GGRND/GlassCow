@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Build;
 import android.view.View;
 
+import com.eaaa.glasscow.tools.util.SystemUiHiderBase;
+import com.eaaa.glasscow.tools.util.SystemUiHiderHoneycomb;
+
 /**
  * A utility class that helps with showing and hiding system UI such as the
  * status bar and navigation/system bar. This class uses backward-compatibility
@@ -20,7 +23,7 @@ import android.view.View;
  * "http://developer.android.com/design/get-started/ui-overview.html#system-bars"
  * > System Bars</a>.
  *
- * @see android.view.View#setSystemUiVisibility(int)
+ * @see View#setSystemUiVisibility(int)
  * @see android.view.WindowManager.LayoutParams#FLAG_FULLSCREEN
  */
 public abstract class SystemUiHider {

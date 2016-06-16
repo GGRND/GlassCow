@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -29,21 +28,20 @@ import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollView;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.*;
 
 public class Activity_Main extends Activity implements AsyncCowResponse,
-		GestureDetector.BaseListener {
+		GestureDetector.BaseListener, Serializable {
 
-    private static final int SPEECH_REQUEST = 0;
-    private static final int SCAN_REQUEST = 1;
-    private static final int COW_BY_OBSERVATION_REQUEST = 2;
+	private static final int SPEECH_REQUEST = 0;
+	private static final int SCAN_REQUEST = 1;
+	private static final int COW_BY_OBSERVATION_REQUEST = 2;
 	//private static final int NEW_EVENT = 1;
-	
+	private static final int RETURN_FROM_COWID = 3;
+
+
 	public static Cow cow;
-	
+
 	private boolean voiceEnabled = true;
 	public CowScrollViewAdapter scrollAdapter;
 	public CardScrollView scrollView;
@@ -51,68 +49,68 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 	private GestureDetector gDetector;
 
 	private int page = 0;
-    private Menu menu = null;
-    private boolean newlyCreated;
+	private Menu menu = null;
+	private boolean newlyCreated;
 
-    public Menu getMenu() {
-        return menu;
-    }
+	public Menu getMenu() {
+		return menu;
+	}
 
-    public void setPage(int page) {
-        this.page = page;
-    }
+	public void setPage(int page) {
+		this.page = page;
+	}
 
-    public String readRawTextFile(int resId)
-    {
-        InputStream inputStream = this.getResources().openRawResource(resId);
+	public String readRawTextFile(int resId)
+	{
+		InputStream inputStream = this.getResources().openRawResource(resId);
 
-        InputStreamReader inputreader = new InputStreamReader(inputStream);
-        BufferedReader buffreader = new BufferedReader(inputreader);
-        String line;
-        StringBuilder text = new StringBuilder();
+		InputStreamReader inputreader = new InputStreamReader(inputStream);
+		BufferedReader buffreader = new BufferedReader(inputreader);
+		String line;
+		StringBuilder text = new StringBuilder();
 
-        try {
-            while (( line = buffreader.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return text.toString();
-    }
+		try {
+			while (( line = buffreader.readLine()) != null) {
+				text.append(line);
+				text.append('\n');
+			}
+		} catch (IOException e) {
+			return null;
+		}
+		return text.toString();
+	}
 
-    public Configuration getConfiguration() {
-        return Configuration.get_Instance(this);
-    }
+	public Configuration getConfiguration() {
+		return Configuration.get_Instance(this);
+	}
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+	@Override
+	protected void onStart() {
+		super.onStart();
 
-        if (newlyCreated) {
-            CowService.getInstance(this).open();
+		if (newlyCreated) {
+			CowService.getInstance(this).open();
 
-            Log.d("GlassCow:Main", "Activity_Start");
-            Cow cow = CowService.getInstance(this).getLastUsedCow();
-            if (cow != null) {
-                asyncCowResponse(cow);
-            } else {
-                identifyCowWithVoice();
-            }
+			Log.d("GlassCow:Main", "Activity_Start");
+			Cow cow = CowService.getInstance(this).getLastUsedCow();
+			if (cow != null) {
+				asyncCowResponse(cow);
+			} else {
+				identifyCowWithVoice();
+			}
 
-            newlyCreated = false;
-        }
-    }
+			newlyCreated = false;
+		}
+	}
 
-        @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-        this.newlyCreated = true;
-        CowService.getInstance(this);
+		this.newlyCreated = true;
+		CowService.getInstance(this);
 
-        getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
+		getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		scrollAdapter = new CowScrollViewAdapter(createViews());
@@ -121,7 +119,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		setContentView(scrollView);
 
 		gDetector = new GestureDetector(this).setBaseListener(this);
-    }
+	}
 
 	@Override
 	protected void onResume() {
@@ -145,21 +143,21 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		return views;
 	}
 
-    public void startEventActivity(int title) {
-        Intent intent = new Intent(this, Activity_Events.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt("Title", title);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
+	public void startEventActivity(int title) {
+		Intent intent = new Intent(this, Activity_Events.class);
+		Bundle bundle = new Bundle();
+		bundle.putInt("Title", title);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
 
-    public void startObservationActivity(int obs_type_id) {
-        Intent intent = new Intent(this, Activity_Observation.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt("TypeId", obs_type_id);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
+	public void startObservationActivity(int obs_type_id) {
+		Intent intent = new Intent(this, Activity_Observation.class);
+		Bundle bundle = new Bundle();
+		bundle.putInt("TypeId", obs_type_id);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
 
 	public void startNewEventActivity(int title, int id) {
 		Intent intent = new Intent(this, Activity_NewEvent.class);
@@ -167,35 +165,56 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		bundle.putInt("Title", title);
 		bundle.putInt("Id", id);
 		intent.putExtras(bundle);
-		 startActivity(intent);
+		startActivity(intent);
 		Log.d("GlassCow:Main", "***start NewEventActivity***" + id + " " + title);
 	}
 
-    public void identifyCowWithVoice() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Cow number?\n(Number/Notice/Update/Settings)");
-        startActivityForResult(intent, SPEECH_REQUEST);
-    }
+	/**
+	 * Identificerer koen ud fra tale
+	 * TODO skal ændre denne til det nye
+	 */
+	public void identifyCowWithVoice() {
 
-    public void identifyObservation() {
-        Intent intent = new Intent(this, Activity_AllObservations.class);
-        startActivityForResult(intent, COW_BY_OBSERVATION_REQUEST);
-        Log.d("GlassCow:Main", "*** start AllObservations ***");
-    }
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Cow number?\n(Number/Notice/Update/Settings)");
+		startActivityForResult(intent, SPEECH_REQUEST);
 
+	}
+
+	/**
+	 * Frederiks test-metode
+	 */
+	public void tester() {
+		Intent intent = new Intent(this, Identify_CowNumber.class);
+
+		startActivityForResult(intent, RETURN_FROM_COWID);
+	}
+
+	public void identifyObservation() {
+		Intent intent = new Intent(this, Activity_AllObservations.class);
+		startActivityForResult(intent, COW_BY_OBSERVATION_REQUEST);
+		Log.d("GlassCow:Main", "*** start AllObservations ***");
+	}
+
+	/**
+	 * Opdaterer til den nye ko med tallet fra identifyCowWithVoice()
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == COW_BY_OBSERVATION_REQUEST && resultCode == RESULT_OK) {
-            Log.d("GlassCow:Main", "Handling COW_BY_OBSERVATION_RESPONSE");
-            Bundle res = data.getExtras();
-            String cow_number_str = res.getString("COW_NUMBER");
-            int cow_number = Integer.valueOf(cow_number_str).intValue();
-            Log.d("GlassCow:Main", "Cow_update: NEW COW ID: " + cow_number);
-            new AsyncCowDataChange(Activity_Main.this, cow_number).execute();
-        }
-        else if (requestCode == SPEECH_REQUEST && resultCode == RESULT_OK)
-        {
+		if (requestCode == COW_BY_OBSERVATION_REQUEST && resultCode == RESULT_OK) {
+			Log.d("GlassCow:Main", "Handling COW_BY_OBSERVATION_RESPONSE");
+			Bundle res = data.getExtras();
+			String cow_number_str = res.getString("COW_NUMBER");
+			int cow_number = Integer.valueOf(cow_number_str).intValue();
+
+			Log.d("GlassCow:Main", "Cow_update: NEW COW ID: " + cow_number);
+			new AsyncCowDataChange(Activity_Main.this, cow_number).execute();
+
+		}
+
+		else if (requestCode == SPEECH_REQUEST && resultCode == RESULT_OK)
+		{
 			List<String> results = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 			String spokenText = results.get(0);
@@ -205,54 +224,68 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 				Log.d("GlassCow:Main", "Cow_update: NEW COW ID: " + input);
 				new AsyncCowDataChange(Activity_Main.this, input).execute();
 			}
-            else if (spokenText.equals("update"))
-            {
-                CowService.getInstance(this).reloadCows();
-            }
-            else if (spokenText.equals("settings"))
-            {
-                Intent intent = new Intent(this, ScanBarCodeActivity.class);
-                startActivityForResult(intent, SCAN_REQUEST);
-            }
-            else if (spokenText.equals("notice"))
-            {
-                identifyObservation();
-            }
-            else
-            {
-                identifyCowWithVoice();
+			if (spokenText.equals("update") || spokenText.equals("updates"))
+			{
+				CowService.getInstance(this).reloadCows();
+			}
+			else if (spokenText.equals("settings"))
+			{
+				Intent intent = new Intent(this, ScanBarCodeActivity.class);
+				startActivityForResult(intent, SCAN_REQUEST);
+			}
+			else if (spokenText.equals("notice"))
+			{
+				identifyObservation();
+			}
+			else
+			{
+				identifyCowWithVoice();
 				Log.d("GlassCow:Main", "Cow_update: Invalid Input");
 			}
 		}
-        else if (requestCode == SCAN_REQUEST && resultCode == RESULT_OK)
-        {
-            Bundle extras = null;
-            if (data != null)
-            {
-                extras = data.getExtras();
-            }
+		else if (requestCode == SCAN_REQUEST && resultCode == RESULT_OK)
+		{
+			Bundle extras = null;
+			if (data != null)
+			{
+				extras = data.getExtras();
+			}
 
-            switch (requestCode)
-            {
-                case SCAN_REQUEST:
-                {
-                    if (resultCode == RESULT_OK)
-                    {
-                        String result = data.getStringExtra("SCAN_RESULT");
-                        Configuration.get_Instance(this).SetConfiguration(result);
-                    }
-                    else
-                    {
-                        Log.d("SCAN_RESULT","requestCode:"+requestCode);
-                    }
-                    break;
-                }
-            }
-        }
+			switch (requestCode)
+			{
+				case SCAN_REQUEST:
+				{
+					if (resultCode == RESULT_OK)
+					{
+						String result = data.getStringExtra("SCAN_RESULT");
+						Configuration.get_Instance(this).SetConfiguration(result);
+					}
+					else
+					{
+						Log.d("SCAN_RESULT","requestCode:" + requestCode);
+					}
+					break;
+				}
+			}
+		}
+
+		else if (requestCode == RETURN_FROM_COWID && resultCode == RESULT_OK)
+		{
+			if (data != null) {
+				int cowNumber = Integer.parseInt(data.getStringExtra("newCowID"));
+
+				changeToNewCowID(cowNumber);
+				Log.d("GlassCow:Main", "CowID changed");
+			}
+
+		}
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	/**
+	 * Validerer om input er en integer
+	 */
 	private int validateString(String text) {
 		text.replace("\\s", "");
 		if (text.matches("[0-9]{4,5}")) {
@@ -264,7 +297,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 	@Override
 	public boolean onCreatePanelMenu(int featureId, Menu menu) {
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
-            this.menu = menu;
+			this.menu = menu;
 			Log.d("GlassCow:Main",
 					"onCreatePanelMenu" + scrollView.getSelectedItemPosition());
 			// getMenuInflater().inflate(R.menu.main, menu);
@@ -341,6 +374,13 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 			return false;
 		}
 		return true;
+	}
+
+	public void changeToNewCowID(int newCowID) {
+		if (newCowID != -1) {
+			Log.d("GlassCow:Main", "Cow_update: NEW COW ID: " + newCowID);
+			new AsyncCowDataChange(Activity_Main.this, newCowID).execute();
+		}
 	}
 
 }

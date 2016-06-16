@@ -6,13 +6,16 @@ import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.eaaa.glasscow.tools.util.*;
+import com.eaaa.glasscow.tools.util.SystemUiHider;
+
 /**
- * An API 11+ implementation of {@link SystemUiHider}. Uses APIs available in
+ * An API 11+ implementation of {@link com.eaaa.glasscow.tools.util.SystemUiHider}. Uses APIs available in
  * Honeycomb and later (specifically {@link View#setSystemUiVisibility(int)}) to
  * show and hide the system UI.
  */
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-public class SystemUiHiderHoneycomb extends SystemUiHiderBase {
+public class SystemUiHiderHoneycomb extends com.eaaa.glasscow.tools.util.SystemUiHiderBase {
     /**
      * Flags for {@link View#setSystemUiVisibility(int)} to use when showing the
      * system UI.
@@ -27,14 +30,14 @@ public class SystemUiHiderHoneycomb extends SystemUiHiderBase {
 
     /**
      * Flags to test against the first parameter in
-     * {@link android.view.View.OnSystemUiVisibilityChangeListener#onSystemUiVisibilityChange(int)}
+     * {@link View.OnSystemUiVisibilityChangeListener#onSystemUiVisibilityChange(int)}
      * to determine the system UI visibility state.
      */
     private int mTestFlags;
 
     /**
      * Whether or not the system UI is currently visible. This is cached from
-     * {@link android.view.View.OnSystemUiVisibilityChangeListener}.
+     * {@link View.OnSystemUiVisibilityChangeListener}.
      */
     private boolean mVisible = true;
 

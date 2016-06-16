@@ -258,7 +258,7 @@ public class RemoteDatabase {
                 for (int i=0; i<cows.length(); i++) {
                     JSONObject cow = cows.getJSONObject(i);
                     String AnimalNumber = cow.getString("AnimalNumber");
-                    String animalShortNumber = AnimalNumber.substring(AnimalNumber.length()-5);
+                    Integer animalShortNumber = Integer.parseInt(AnimalNumber.substring(AnimalNumber.length()-5));
                     String cowJSON = cow.toString();
                     ContentValues values = new ContentValues();
                     values.put(FIELD_AnimalShortNumber, animalShortNumber);
@@ -350,4 +350,6 @@ public class RemoteDatabase {
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
+
+
 }

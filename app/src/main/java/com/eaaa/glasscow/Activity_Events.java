@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eaaa.glasscow.*;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowValue;
 import com.google.android.glass.media.Sounds;
@@ -57,7 +58,7 @@ public class Activity_Events extends Activity implements
 		Bundle bundle = getIntent().getExtras();
 		this.title = getString(bundle.getInt("Title"));
 
-		Cow cow = Activity_Main.cow;
+		Cow cow = com.eaaa.glasscow.Activity_Main.cow;
         this.shortNumber = Integer.valueOf(cow.getShortNumber()).intValue();
 		switch (bundle.getInt("Title")) {
 		case R.string.information:

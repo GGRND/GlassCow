@@ -7,14 +7,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.eaaa.glasscow.service.CowService;
 import com.google.android.glass.view.WindowUtils;
 
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -23,7 +21,7 @@ import java.util.List;
  */
 public class Identify_CowNumber extends Activity {
 
-    private static String cowNumber = "";
+    private String cowNumber = "";
     private TextView newCowIDView;
     private Menu menu;
 
@@ -92,7 +90,7 @@ public class Identify_CowNumber extends Activity {
                 SubMenu subMenu0 = menu.addSubMenu(Menu.NONE, MENU0, Menu.NONE, "0");
             }
             if (cowNumber == 1) {
-                SubMenu subMenu1 = menu.addSubMenu(Menu.NONE, MENU1, Menu.NONE, "1. dette er en test");
+                SubMenu subMenu1 = menu.addSubMenu(Menu.NONE, MENU1, Menu.NONE, "1");
             }
             if (cowNumber == 2) {
                 SubMenu subMenu2 = menu.addSubMenu(Menu.NONE, MENU2, Menu.NONE, "2");
@@ -186,8 +184,7 @@ public class Identify_CowNumber extends Activity {
                 break;
 
             case R.id.number_ten:
-                String redo = redo(cowNumber);
-                cowNumber = redo;
+
                 updateNewCowIDView();
                 break;
 

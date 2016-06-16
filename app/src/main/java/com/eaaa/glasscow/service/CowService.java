@@ -16,6 +16,10 @@ import android.database.Cursor;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 public class CowService {
 
@@ -23,7 +27,7 @@ public class CowService {
 	private CowPreference prefs;
 	private CowDatabase cDB;
 
-	private CowService(Activity_Main context) {
+	public CowService(Activity_Main context) {
 		Log.d("GlassCow:CowService", "Service_Initialized");
 		cDB = new CowDatabase(context);
 		prefs = new CowPreference(context, System.currentTimeMillis());
@@ -158,8 +162,6 @@ public class CowService {
     public String fetchCowJSON(int id) {
 		Log.d("GlassCow:CowService", "fetchCowData");
         String Id = String.valueOf(id);
-        while (Id.length()<5)
-            Id = "0"+Id;
         Cursor cursorContent = cDB.getDb().query(TABLE_COW, new String[]{FIELD_AnimalShortNumber,FIELD_JSON}, FIELD_AnimalShortNumber +"=?", new String[]{Id}, null, null, null, null);
 		Log.d("GlassCow:CowService", "fetchCowData2");
 		if (cursorContent.moveToFirst()) {
@@ -187,5 +189,28 @@ public class CowService {
         loadObservations(Activity_Main.cow);
         cDB.sentObservationsToRemote(Activity_Main.cow.getObservations());
         return result;
+    }
+
+    public List<Integer> returnNumbers(int min, int max, int currentCipher) {
+        HashSet<Integer> numbers = new HashSet<Integer>();
+
+        int cipherPowered = (int) Math.pow(10, (currentCipher));
+
+        Cursor cursorContent = cDB.getDb().rawQuery("SELECT * FROM " + TABLE_COW, null);
+        cursorContent.moveToFirst();
+        while (!cursorContent.isAfterLast()) {
+            String number = cursorContent.getString(cursorContent.getColumnIndex(FIELD_AnimalShortNumber));
+            int cowNumber = Integer.parseInt(number);
+
+            if (cowNumber >= min && cowNumber <= max) {
+                int newCowNumber = (cowNumber / cipherPowered) % 10;
+                numbers.add(newCowNumber);
+            }
+            cursorContent.moveToNext();
+        }
+
+        List<Integer> sortedList = new ArrayList<Integer>(numbers);
+        Collections.sort(sortedList);
+        return sortedList;
     }
 }

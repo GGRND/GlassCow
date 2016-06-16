@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.eaaa.glasscow.*;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.model.CowValue;
 import com.eaaa.glasscow.service.CowService;
@@ -52,7 +53,7 @@ public class Activity_NewEvent extends Activity implements GestureDetector.BaseL
 		this.title = getString(bundle.getInt("Title"));
 
 //		Cow cow = CowService.getInstance().getCow(id);
-		Cow cow = Activity_Main.cow;
+		Cow cow = com.eaaa.glasscow.Activity_Main.cow;
 
 		switch (bundle.getInt("Title")) {
 		case R.string.information:
