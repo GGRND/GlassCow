@@ -34,7 +34,8 @@
 
 
     <!-- Description texts for activity_aflivet -->
-    <string name="first_description">Ønskes dags dato valgt?</string>
+    <string name="first_description_aflivet">Ønskes dags dato valgt?</string>
+    <string name="second_description_aflivet">Informationen er klar til at bliev sendt.</string>
 
 
 </resources>
