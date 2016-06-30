@@ -23,6 +23,10 @@ public class MenuHandler {
     private static final int MENU_NEW_EVENT = 9;
     private static final int MENU_TESTER = 10;
 
+    //Numbers for aflivet menu
+    public static final int MENU_CURRENT_DATE_YES = 11;
+    public static final int MENU_CURRENT_DATE_NO = 12;
+
     public static void updateMenu(Activity_Main activity, Menu menu, Screen_CowData data) {
         if (menu == null)
             return;
@@ -109,4 +113,16 @@ public class MenuHandler {
         return -1;
     }
 
+    public static void dateMenu(Menu menu, int howFarAreWe) {
+        if (howFarAreWe == 1) {
+            menu.addSubMenu(Menu.NONE, MENU_CURRENT_DATE_YES, Menu.NONE, "Yes");
+            menu.addSubMenu(Menu.NONE, MENU_CURRENT_DATE_NO, Menu.NONE, "No");
+        }
+        if (howFarAreWe == 2) {
+
+        }
+        if (howFarAreWe == 3) {
+
+        }
+    }
 }

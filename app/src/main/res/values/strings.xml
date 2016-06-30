@@ -33,5 +33,9 @@
     <string name="title_activity_tester">Tester</string>
 
 
+    <!-- Description texts for activity_aflivet -->
+    <string name="first_description">Ønskes dags dato valgt?</string>
+
+
 </resources>
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Aflivet"
+        android:layout_marginLeft="10dp"
+        android:textSize="35dp"/>
+
+    <TextView
+        android:id="@+id/CowText_aflivet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cow: "
+        android:textSize="35dp"
+        android:paddingLeft="10dp"
+        android:layout_toLeftOf="@+id/CowID_aflivet"
+        />
+    <TextView
+        android:id="@+id/CowID_aflivet"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:textSize="35dp"
+        android:layout_alignParentRight="true"
+        />
+
+    <RelativeLayout
+        android:id="@+id/date_text_aflivet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/CowText_aflivet"
+        android:layout_alignLeft="@+id/CowText_aflivet"
+        android:paddingLeft="10dp"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="35dp"
+            android:text="Date:"/>
+
+        <TextView
+            android:id="@+id/date_aflivet"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/first_description_aflivet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/first_description"
+        android:textSize="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/CowText_aflivet"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="10dp"/>
+</RelativeLayout>
