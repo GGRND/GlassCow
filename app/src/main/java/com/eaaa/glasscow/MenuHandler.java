@@ -22,6 +22,7 @@ public class MenuHandler {
     private static final int MENU_EXIT = 8;
     private static final int MENU_NEW_EVENT = 9;
     private static final int MENU_TESTER = 10;
+    private static final int MENU_CALVING = 10;
 
     public static void updateMenu(Activity_Main activity, Menu menu, Screen_CowData data) {
         if (menu == null)
@@ -32,6 +33,7 @@ public class MenuHandler {
         menu.add(Menu.NONE, MENU_IDENTIFY_COW, Menu.NONE, R.string.menu_identify_cow);
         menu.add(Menu.NONE, MENU_MORE, Menu.NONE, R.string.menu_more);
         menu.add(Menu.NONE, MENU_TESTER, Menu.NONE, R.string.tester);
+        //menu.add(Menu.NONE, MENU_CALVING, Menu.NONE, R.string.calving);
 
         if (data.getObservationTypeId()!=DatabaseFields.TYPE_ID_Yver) {
             menu.add(Menu.NONE, MENU_INFORMATION, Menu.NONE, R.string.information);
@@ -96,7 +98,10 @@ public class MenuHandler {
             case MENU_TESTER:
                 activity.tester();
                 break;
-
+            //Calving
+           // case MENU_CALVING:
+           //     activity.tester();
+           //     break;
         /*case MENU_IDENTIFY_OBSERVATION:
                 activity.identifyObservation();
                 break;*/

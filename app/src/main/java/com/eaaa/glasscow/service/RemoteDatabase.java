@@ -352,4 +352,61 @@ public class RemoteDatabase {
     }
 
 
+    //Parser om et dyr er aflivet, slagtning, whatever.
+        public void sendDeath(final int herdId, final int cowNumber, final int transferCodeId, final int transferToId, final String date) {
+            if (isTokenRequestNeeded())
+            {
+                new retrieveTokenTask() {
+                    @Override
+                    void callBack(String result) {
+                        if (!isTokenRequestNeeded())
+                            sendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
+                    }
+                }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
+            }
+            else
+            {
+                sendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
+            }
+        }
+    private void doSendDeath(final int herdId, final int cowNumber, final int transferCodeId, final int transferToId, final String date) {
+        Configuration conf = context.getConfiguration();
+
+        //send observation to backend database
+        ArrayList<String> params = new ArrayList<String>();
+        params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
+        params.add("{\"$id\":\"1\"," +
+                "\"AnimalId\":\"" + cowNumber + "\"," +
+                "\"HerdId\":\"" + herdId + "\"," +
+                "\"TransferDate\":\"" + date + "\"," +
+                "\"TransferCodeId\":\"" + herdId + "\"," +
+                "\"TransferCause1Id\":\"" + herdId + "\"," +
+                       // ToHerdNumber = 71455,
+
+                /*FromHerdNumber = herdNumber,
+    ToHerdNumber = 71455,
+    TransferCause1Id = null,*/
+
+                "\"transferCodeId\":" + transferCodeId + "}");
+
+        params.add("Authorization");
+        params.add("SAML " + token);
+
+        params.add("Accept-Encoding");
+        params.add("gzip, deflate");
+
+        params.add("Content-Type");
+        params.add("application/json; charset=utf-8");
+
+        params.add("Host");
+        params.add(conf.get_Host());
+
+        new postSecureRequestTask() {
+            @Override
+            void callBack(String result) throws JSONException {
+                Log.d("Sent obs response", result);
+                doSendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
+            }
+        }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
+    }
 }
