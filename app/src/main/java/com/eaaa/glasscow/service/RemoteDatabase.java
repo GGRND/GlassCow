@@ -377,17 +377,11 @@ public class RemoteDatabase {
         params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
         params.add("{\"$id\":\"1\"," +
                 "\"AnimalId\":\"" + cowNumber + "\"," +
-                "\"HerdId\":\"" + herdId + "\"," +
+                "\"FromHerdNumber\":\"" + herdId + "\"," +
                 "\"TransferDate\":\"" + date + "\"," +
-                "\"TransferCodeId\":\"" + herdId + "\"," +
-                "\"TransferCause1Id\":\"" + herdId + "\"," +
-                       // ToHerdNumber = 71455,
-
-                /*FromHerdNumber = herdNumber,
-    ToHerdNumber = 71455,
-    TransferCause1Id = null,*/
-
-                "\"transferCodeId\":" + transferCodeId + "}");
+                "\"TransferCodeId\":\"" + transferCodeId + "\"," +
+                "\"TransferCause1Id\":\"" + null + "\"," +
+                "\"ToHerdNumber\":\"" + 71930 + "}");
 
         params.add("Authorization");
         params.add("SAML " + token);
