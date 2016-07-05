@@ -24,11 +24,10 @@ public class Activity_Dead_Cow extends Activity {
     private TextView cowIDView, dateTextView, firstDescription, secondDescription;
     private RelativeLayout destructionView, dateView;
     private Menu menu;
-    private CowObservation cowObservation;
     private Cow cow;
 
     String date, herdId, shortAnimalNumber;
-    private int menuNumberCounter = 0;
+    private int menuNumberCounter = 1;
 
     // Menu item ids:
     public static final int MENU_CURRENT_DATE_YES = 11;
@@ -93,12 +92,10 @@ public class Activity_Dead_Cow extends Activity {
         if (menuNumberCounter == 1) {
             dateView.setVisibility(View.VISIBLE);
             firstDescription.setVisibility(View.INVISIBLE);
+            destructionView.setVisibility(View.VISIBLE);
+            secondDescription.setVisibility(View.VISIBLE);
         }
         if (menuNumberCounter == 2) {
-            destructionView.setVisibility(View.VISIBLE);
-        }
-        if (menuNumberCounter == 3) {
-            secondDescription.setVisibility(View.VISIBLE);
 
         }
     }
@@ -115,8 +112,8 @@ public class Activity_Dead_Cow extends Activity {
         switch (item.getItemId()) {
             case MENU_CURRENT_DATE_YES:
                 setCurrentDate();
-                menuNumberCounter++;
                 setCertainViewVisible();
+                menuNumberCounter++;
                 break;
             case MENU_CURRENT_DATE_NO:
                 //TODO manuelt indtale dato.
