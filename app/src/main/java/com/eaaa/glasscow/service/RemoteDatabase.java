@@ -353,7 +353,7 @@ public class RemoteDatabase {
 
 
     //Parser om et dyr er aflivet, slagtning, whatever.
-        public void sendDeath(final int herdId, final int cowNumber, final int transferCodeId, final String date) {
+        public void sendDeath(final String herdId, final String cowNumber, final String transferCodeId, final String date) {
             if (isTokenRequestNeeded())
             {
                 new retrieveTokenTask() {
@@ -369,7 +369,7 @@ public class RemoteDatabase {
                 doSendDeath(herdId, cowNumber, transferCodeId, date);
             }
         }
-    private void doSendDeath(final int herdId, final int cowNumber, final int transferCodeId, final String date) {
+    private void doSendDeath(final String herdId, final String cowNumber, final String transferCodeId, final String date) {
         Configuration conf = context.getConfiguration();
 
         //send observation to backend database
