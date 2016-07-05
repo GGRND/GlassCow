@@ -353,20 +353,20 @@ public class RemoteDatabase {
 
 
     //Parser om et dyr er aflivet, slagtning, whatever.
-        public void sendDeath(final int herdId, final int cowNumber, final int transferCodeId, final int transferToId, final String date) {
+        public void sendDeath(final int herdId, final int cowNumber, final int transferCodeId, final String date) {
             if (isTokenRequestNeeded())
             {
                 new retrieveTokenTask() {
                     @Override
                     void callBack(String result) {
                         if (!isTokenRequestNeeded())
-                            sendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
+                            doSendDeath(herdId, cowNumber, transferCodeId, date);
                     }
                 }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
             }
             else
             {
-                sendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
+                doSendDeath(herdId, cowNumber, transferCodeId, date);
             }
         }
     private void doSendDeath(final int herdId, final int cowNumber, final int transferCodeId, final String date) {
@@ -399,7 +399,7 @@ public class RemoteDatabase {
             @Override
             void callBack(String result) throws JSONException {
                 Log.d("Sent obs response", result);
-                doSendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
+                doSendDeath(herdId, cowNumber, transferCodeId, date);
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
