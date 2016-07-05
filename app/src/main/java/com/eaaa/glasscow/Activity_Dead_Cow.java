@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eaaa.glasscow.model.Cow;
-import com.eaaa.glasscow.model.CowObservation;
+import com.eaaa.glasscow.service.RemoteDatabase;
 import com.google.android.glass.view.WindowUtils;
 
 import java.text.SimpleDateFormat;
@@ -24,9 +24,13 @@ public class Activity_Dead_Cow extends Activity {
     private TextView cowIDView, dateTextView, firstDescription, secondDescription;
     private RelativeLayout destructionView, dateView;
     private Menu menu;
+
+    private Activity_Main ctx;
+    private RemoteDatabase remoteDatabase;
     private Cow cow;
 
-    String date, herdId, shortAnimalNumber;
+    private final long transferCodeId = 19;
+    private String date, herdId, shortAnimalNumber;
     private int menuNumberCounter = 1;
 
     // Menu item ids:
@@ -41,7 +45,8 @@ public class Activity_Dead_Cow extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_dead);
-
+        ctx = new Activity_Main();
+        remoteDatabase = RemoteDatabase.getInstance(ctx);
         initElements();
         firstDescription.setVisibility(View.VISIBLE);
         getCowInfo();
@@ -108,16 +113,27 @@ public class Activity_Dead_Cow extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        setCertainViewVisible();
+
         setMenu(item.getSubMenu());
 
         switch (item.getItemId()) {
             case MENU_CURRENT_DATE_YES:
-                setCurrentDate();
-                setCertainViewVisible();
+                if (menuNumberCounter == 1) {
+                    setCurrentDate();
+                    setCertainViewVisible();
+                }
+                if (menuNumberCounter == 2) {
+                    remoteDatabase.sendDeath(herdId, shortAnimalNumber, transferCodeId, date);
+                }
                 menuNumberCounter++;
                 break;
             case MENU_CURRENT_DATE_NO:
+                if (menuNumberCounter == 1) {
+
+                }
+                if (menuNumberCounter == 2) {
+
+                }
                 //TODO manuelt indtale dato.
                 break;
 
