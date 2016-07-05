@@ -43,6 +43,7 @@
         <activity android:name=".Activity_Observation" />
         <activity android:name=".Activity_AllObservations" />
         <activity android:name=".Identify_CowNumber" />
+        <activity android:name=".Activity_Dead_Cow" />
         <activity
             android:name=".ScanBarCodeActivity"
             android:label="@string/title_activity_scan_bar_code">

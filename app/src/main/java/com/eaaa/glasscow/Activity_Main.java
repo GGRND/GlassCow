@@ -184,7 +184,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 	/**
 	 * Frederiks test-metode
 	 */
-	public void tester() {
+	public void identifyCow() {
 		Intent intent = new Intent(this, Identify_CowNumber.class);
 
 		startActivityForResult(intent, RETURN_FROM_COWID);
@@ -194,6 +194,12 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		Intent intent = new Intent(this, Activity_AllObservations.class);
 		startActivityForResult(intent, COW_BY_OBSERVATION_REQUEST);
 		Log.d("GlassCow:Main", "*** start AllObservations ***");
+	}
+
+	public void registerDeadCow() {
+		Intent intent = new Intent(this, Activity_Dead_Cow.class);
+
+		startActivity(intent);
 	}
 
 	/**
@@ -314,7 +320,7 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 		if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
 			int temp = MenuHandler.onMainMenuItemSelected(this,
 					(Screen_CowData) scrollAdapter.getItem(scrollView
-							.getSelectedItemPosition()), item.getItemId());
+							.getSelectedItemPosition()), item.getItemId(), item.getSubMenu());
 			if (temp != -1 && temp != page) {
 				page = temp;
 				getWindow().invalidatePanelMenu(
