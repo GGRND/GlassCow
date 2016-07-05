@@ -369,7 +369,7 @@ public class RemoteDatabase {
                 sendDeath(herdId, cowNumber, transferCodeId, transferToId, date);
             }
         }
-    private void doSendDeath(final int herdId, final int cowNumber, final int transferCodeId, final int transferToId, final String date) {
+    private void doSendDeath(final int herdId, final int cowNumber, final int transferCodeId, final String date) {
         Configuration conf = context.getConfiguration();
 
         //send observation to backend database

@@ -56,7 +56,9 @@ public class Activity_Dead_Cow extends Activity {
         cow = com.eaaa.glasscow.Activity_Main.cow;
         herdId = cow.getHerdId();
         shortAnimalNumber = cow.getShortNumber();
+
     }
+
 
     private void initElements() {
         cowIDView = (TextView) findViewById(R.id.CowID_aflivet);
