@@ -20,11 +20,12 @@
     <string name="menu_more">More</string>
     <string name="menu_events">Events</string>
     <string name="menu_observation">Notice</string>
-    <string name="menu_identify_cow">Identify Cow</string>
+    <string name="menu_identify_cow">Morten</string>
     <string name="menu_identify_observation">All notices</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_new_event">New Event</string>
-    <string name="tester">Test</string>
+    <string name="tester">Identify Cow</string>
+    <string name="turnover">Turnover</string>
 
     <string name="title_activity_scan_settings">ScanSettingsActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -32,11 +33,16 @@
     <string name="title_activity_scan_bar_code">ScanBarCodeActivity</string>
     <string name="title_activity_tester">Tester</string>
 
+    <!-- Menu items for "omsætninger -->
+    <string name="entry">Entry</string>
+    <string name="departure">Departure</string>
+    <string name="slaughter">Slaughter</string>
+    <string name="dead">Dead</string>
+    <string name="killed">Killed</string>
 
-    <!-- Description texts for activity_aflivet -->
+    <!-- Description texts for activity_dead -->
     <string name="first_description_aflivet">Ønskes dags dato valgt?</string>
     <string name="second_description_aflivet">Informationen er klar til at bliev sendt.</string>
-
 
 </resources>
 

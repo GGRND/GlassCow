@@ -3,9 +3,6 @@ package com.eaaa.glasscow;
 import android.util.Log;
 import android.view.Menu;
 
-import com.eaaa.glasscow.Activity_Main;
-import com.eaaa.glasscow.R;
-import com.eaaa.glasscow.Screen_CowData;
 import com.eaaa.glasscow.service.DatabaseFields;
 import com.google.android.glass.widget.CardScrollView;
 
@@ -22,10 +19,18 @@ public class MenuHandler {
     private static final int MENU_EXIT = 8;
     private static final int MENU_NEW_EVENT = 9;
     private static final int MENU_TESTER = 10;
+    private static final int MENU_TURNOVER = 11;
 
     //Numbers for aflivet menu
-    public static final int MENU_CURRENT_DATE_YES = 11;
-    public static final int MENU_CURRENT_DATE_NO = 12;
+    private static final int MENU_CURRENT_DATE_YES = 11;
+    private static final int MENU_CURRENT_DATE_NO = 12;
+
+    //Numbers for "omsætninger" menu items
+    private static final int MENU_TURNOVER_ENTRY = 13;
+    private static final int MENU_TURNOVER_DEPARTURE = 14;
+    private static final int MENU_TURNOVER_SLAUGHTER = 15;
+    private static final int MENU_TURNOVER_DEAD = 16;
+    private static final int MENU_TURNOVER_KILLED = 17;
 
     public static void updateMenu(Activity_Main activity, Menu menu, Screen_CowData data) {
         if (menu == null)
@@ -36,6 +41,8 @@ public class MenuHandler {
         menu.add(Menu.NONE, MENU_IDENTIFY_COW, Menu.NONE, R.string.menu_identify_cow);
         menu.add(Menu.NONE, MENU_MORE, Menu.NONE, R.string.menu_more);
         menu.add(Menu.NONE, MENU_TESTER, Menu.NONE, R.string.tester);
+
+        menu.addSubMenu(Menu.NONE, MENU_TURNOVER, Menu.NONE, R.string.turnover);
 
         if (data.getObservationTypeId()!=DatabaseFields.TYPE_ID_Yver) {
             menu.add(Menu.NONE, MENU_INFORMATION, Menu.NONE, R.string.information);
@@ -55,12 +62,11 @@ public class MenuHandler {
             //menu.add(Menu.NONE, MENU_NEW_EVENT, Menu.NONE, R.string.menu_new_event);
         }
 
-
         //menu.add(Menu.NONE, MENU_IDENTIFY_OBSERVATION, Menu.NONE, R.string.menu_identify_observation);
         //menu.add(Menu.NONE, MENU_EXIT, Menu.NONE, R.string.menu_exit);
     }
 
-    public static int onMainMenuItemSelected(Activity_Main activity, Screen_CowData data, int id) {
+    public static int onMainMenuItemSelected(Activity_Main activity, Screen_CowData data, int id, Menu menu) {
         Log.d("GlassCow:MenuHandler", "menu_id: " + id);
         switch (id) {
             case MENU_MORE:
@@ -96,9 +102,32 @@ public class MenuHandler {
                 activity.identifyCowWithVoice();
                 break;
 
-            // Frederiks tilføjelese
             case MENU_TESTER:
-                activity.tester();
+                activity.identifyCow();
+                break;
+
+            case MENU_TURNOVER:
+                turnoverMenuItems(menu);
+                break;
+
+            case MENU_TURNOVER_ENTRY:
+
+                break;
+
+            case MENU_TURNOVER_DEPARTURE:
+
+                break;
+
+            case MENU_TURNOVER_SLAUGHTER:
+
+                break;
+
+            case MENU_TURNOVER_DEAD:
+                activity.registerDeadCow();
+                break;
+
+            case MENU_TURNOVER_KILLED:
+
                 break;
 
         /*case MENU_IDENTIFY_OBSERVATION:
@@ -113,16 +142,17 @@ public class MenuHandler {
         return -1;
     }
 
-    public static void dateMenu(Menu menu, int howFarAreWe) {
-        if (howFarAreWe == 1) {
-            menu.addSubMenu(Menu.NONE, MENU_CURRENT_DATE_YES, Menu.NONE, "Yes");
-            menu.addSubMenu(Menu.NONE, MENU_CURRENT_DATE_NO, Menu.NONE, "No");
-        }
-        if (howFarAreWe == 2) {
-
-        }
-        if (howFarAreWe == 3) {
-
-        }
+    public static void yesNoMenuItems(Menu menu) {
+        menu.addSubMenu(Menu.NONE, MENU_CURRENT_DATE_YES, Menu.NONE, "Yes");
+        menu.addSubMenu(Menu.NONE, MENU_CURRENT_DATE_NO, Menu.NONE, "No");
     }
+
+    public static void turnoverMenuItems(Menu menu) {
+        menu.add(Menu.NONE, MENU_TURNOVER_ENTRY, Menu.NONE, R.string.entry);
+        menu.add(Menu.NONE, MENU_TURNOVER_DEPARTURE, Menu.NONE, R.string.departure);
+        menu.add(Menu.NONE, MENU_TURNOVER_SLAUGHTER, Menu.NONE, R.string.slaughter);
+        menu.add(Menu.NONE, MENU_TURNOVER_DEAD, Menu.NONE, R.string.dead);
+        menu.add(Menu.NONE, MENU_TURNOVER_KILLED, Menu.NONE, R.string.killed);
+    }
+
 }

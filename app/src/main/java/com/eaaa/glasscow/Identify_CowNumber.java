@@ -51,7 +51,7 @@ public class Identify_CowNumber extends Activity {
 
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         // Sørger for at skærmen er tændt hele tiden
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.identify_cownumber);
 
@@ -67,7 +67,7 @@ public class Identify_CowNumber extends Activity {
     }
 
     /**
-     * Menuen shown by saying "OK Glass"
+     * Menu shown by saying "OK Glass"
      */
     @Override
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
