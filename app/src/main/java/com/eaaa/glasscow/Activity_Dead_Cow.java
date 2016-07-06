@@ -30,6 +30,7 @@ public class Activity_Dead_Cow extends Activity {
     private Cow cow;
 
     private final long transferCodeId = 19;
+    private String animalId;
     private String date, herdId, shortAnimalNumber;
     private int menuNumberCounter = 1;
 
@@ -61,7 +62,7 @@ public class Activity_Dead_Cow extends Activity {
         cow = com.eaaa.glasscow.Activity_Main.cow;
         herdId = cow.getHerdId();
         shortAnimalNumber = cow.getShortNumber();
-
+        animalId = cow.getAnimalId();
     }
 
 
@@ -123,7 +124,7 @@ public class Activity_Dead_Cow extends Activity {
                     setCertainViewVisible();
                 }
                 if (menuNumberCounter == 2) {
-                    remoteDatabase.sendDeath(herdId, shortAnimalNumber, transferCodeId, date);
+                    remoteDatabase.sendDeath(herdId, animalId, transferCodeId, date);
                 }
                 menuNumberCounter++;
                 break;
