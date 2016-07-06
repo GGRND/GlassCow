@@ -353,19 +353,28 @@ public class RemoteDatabase {
 
 
     //Parser om et dyr er aflivet, slagtning, whatever.
+<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
         public void sendDeath(final String herdId, final String animalNumber, final long transferCodeId, final String date) {
+=======
+        public void sendDeath(final String herdId, final long animalID, final String transferCodeId, final String date) {
+>>>>>>> no message
             if (isTokenRequestNeeded())
             {
                 new retrieveTokenTask() {
                     @Override
                     void callBack(String result) {
                         if (!isTokenRequestNeeded())
+<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
                             doSendDeath(herdId, animalNumber, transferCodeId, date);
+=======
+                            doSendDeath(herdId, animalID, transferCodeId, date);
+>>>>>>> no message
                     }
                 }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
             }
             else
             {
+<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
                 doSendDeath(herdId, animalNumber, transferCodeId, date);
             }
         }
@@ -373,13 +382,23 @@ public class RemoteDatabase {
         //Should make it possible to debug this method
         //android.os.Debug.waitForDebugger();
 
+=======
+                doSendDeath(herdId, animalID, transferCodeId, date);
+            }
+        }
+    private void doSendDeath(final String herdId, final long animalID, final String transferCodeId, final String date) {
+>>>>>>> no message
         Configuration conf = context.getConfiguration();
 
-        //send observation to backend database
+        //send death registry to backend database
         ArrayList<String> params = new ArrayList<String>();
         params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
         params.add("{\"$id\":\"1\"," +
+<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
                 "\"AnimalId\":\"" + animalNumber + "\"," +
+=======
+                "\"AnimalId\":\"" + animalID + "\"," +
+>>>>>>> no message
                 "\"FromHerdNumber\":\"" + herdId + "\"," +
                 "\"TransferDate\":\"" + date + "\"," +
                 "\"TransferCodeId\":\"" + transferCodeId + "\"," +
@@ -402,8 +421,13 @@ public class RemoteDatabase {
         new postSecureRequestTask() {
             @Override
             void callBack(String result) throws JSONException {
+<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
                 //Log.d("Sent obs response", result);
                 doSendDeath(herdId, animalNumber, transferCodeId, date);
+=======
+                Log.d("Sent obs response", result);
+                doSendDeath(herdId, animalID, transferCodeId, date);
+>>>>>>> no message
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
