@@ -16,9 +16,9 @@ import com.eaaa.glasscow.tools.CowMath;
 
 public class JSONCowParser {
 
-	public static com.eaaa.glasscow.model.Cow parseJSONToCow(String json) {
+	public static Cow parseJSONToCow(String json) {
 		Log.d("GlassCow:JSONCowParser", "parseJSONToCow_start");
-		com.eaaa.glasscow.model.Cow cow = new com.eaaa.glasscow.model.Cow();
+		Cow cow = new Cow();
 		try {
 			JSONObject main = new JSONObject(json);
 
@@ -53,77 +53,77 @@ public class JSONCowParser {
 		return cow;
 	}
 
-	private static void addInformation(JSONObject main, com.eaaa.glasscow.model.Cow cow) throws JSONException, ParseException {
+	private static void addInformation(JSONObject main, Cow cow) throws JSONException, ParseException {
 		// 1: Date of Birth
-		cow.addInformation(new com.eaaa.glasscow.model.CowValue("Date of birth", "" + CowMath.daysSince(main.getString("DateOfBirth")) + " days old"));
+		cow.addInformation(new CowValue("Date of birth", "" + CowMath.daysSince(main.getString("DateOfBirth")) + " days old"));
 
 		// 2: Status
 		JSONObject animalStatus = main.getJSONObject("AnimalStatus");
-		cow.addInformation(new com.eaaa.glasscow.model.CowValue("Status", animalStatus.get("AnimalStatusText").toString()));
+		cow.addInformation(new CowValue("Status", animalStatus.get("AnimalStatusText").toString()));
 
 		// 3: Culling
-		cow.addInformation(new com.eaaa.glasscow.model.CowValue("Culling", main.get("CullingText").toString()));
+		cow.addInformation(new CowValue("Culling", main.get("CullingText").toString()));
 
 		// 4: KgECMDay
-		cow.addInformation(new com.eaaa.glasscow.model.CowValue("KgECMDay", main.get("KgECMLastTestDay").toString()));
+		cow.addInformation(new CowValue("KgECMDay", main.get("KgECMLastTestDay").toString()));
 
 		// 5: ECM12M
-		cow.addInformation(new com.eaaa.glasscow.model.CowValue("KgECM12Months", main.get("KgECMLast12Months").toString()));
+		cow.addInformation(new CowValue("KgECM12Months", main.get("KgECMLast12Months").toString()));
 	}
 
-	private static void addHealth(JSONObject main, com.eaaa.glasscow.model.Cow cow) throws JSONException, ParseException {
+	private static void addHealth(JSONObject main, Cow cow) throws JSONException, ParseException {
 		JSONArray tempHealthEvents = main.getJSONArray("CowIndexCardMobileHealths");
 		for (int i = 0; i < tempHealthEvents.length(); i++) {
 			JSONObject temp = tempHealthEvents.getJSONObject(i);
-			cow.addHealthEvent(new com.eaaa.glasscow.model.CowValue(temp.getString("Text"), "" + CowMath.daysSince(temp.get("IllnessDate").toString()) + " days ago"));
+			cow.addHealthEvent(new CowValue(temp.getString("Text"), "" + CowMath.daysSince(temp.get("IllnessDate").toString()) + " days ago"));
 		}
 
 		// 1: ParaTB
-		cow.addHealth(new com.eaaa.glasscow.model.CowValue("ParaTB", main.get("ParaTBLatestAntibody").toString()));
+		cow.addHealth(new CowValue("ParaTB", main.get("ParaTBLatestAntibody").toString()));
 
 		// 2: CellCount
-		cow.addHealth(new com.eaaa.glasscow.model.CowValue("Cell Count", main.get("SCCLastTestDay").toString()));
+		cow.addHealth(new CowValue("Cell Count", main.get("SCCLastTestDay").toString()));
 
 		// 3: Mastitis
-		List<com.eaaa.glasscow.model.CowValue> healthEvents = cow.getHealthEvents();
-		com.eaaa.glasscow.model.CowValue temp = findEvent("Yverbetændelse", healthEvents);
-		cow.addHealth(new com.eaaa.glasscow.model.CowValue("Mastitis", (temp != null ? temp.getValue() : "NaN")));
+		List<CowValue> healthEvents = cow.getHealthEvents();
+		CowValue temp = findEvent("Yverbetændelse", healthEvents);
+		cow.addHealth(new CowValue("Mastitis", (temp != null ? temp.getValue() : "NaN")));
 
 		// 4: Hoof trimming
 		temp = findEvent("Klovbeskæring", healthEvents);
-		cow.addHealth(new com.eaaa.glasscow.model.CowValue("Hoof trimming", (temp != null ? temp.getValue() : "NaN")));
+		cow.addHealth(new CowValue("Hoof trimming", (temp != null ? temp.getValue() : "NaN")));
 	}
 
-	private static void addReproduction(JSONObject main, com.eaaa.glasscow.model.Cow cow) throws JSONException, ParseException {
+	private static void addReproduction(JSONObject main, Cow cow) throws JSONException, ParseException {
 		JSONArray tempReproductionEvents = main.getJSONArray("CowIndexCardMobileReproductions");
 		for (int i = 0; i < tempReproductionEvents.length(); i++) {
 			JSONObject temp = tempReproductionEvents.getJSONObject(i);
-			cow.addReproductionEvent(new com.eaaa.glasscow.model.CowValue(temp.getString("Text"), "" + CowMath.daysSince(temp.get("EventDate").toString()) + " days ago"));
+			cow.addReproductionEvent(new CowValue(temp.getString("Text"), "" + CowMath.daysSince(temp.get("EventDate").toString()) + " days ago"));
 		}
 
 
 		// 1 : pregnant
-        cow.addReproduction(new com.eaaa.glasscow.model.CowValue("Pregnant", (main.getString("PregnancyStatus").equalsIgnoreCase("true") ? "Yes" : "No")));
+        cow.addReproduction(new CowValue("Pregnant", (main.getString("PregnancyStatus").equalsIgnoreCase("true") ? "Yes" : "No")));
 
 		// 2: Insemination
-		List<com.eaaa.glasscow.model.CowValue> reproductionEvents = cow.getReproductionEvents();
-		com.eaaa.glasscow.model.CowValue temp = findEvent("Inseminering", reproductionEvents);
-		cow.addReproduction(new com.eaaa.glasscow.model.CowValue("Insemination", (temp != null ? temp.getValue() : "NaN")));
+		List<CowValue> reproductionEvents = cow.getReproductionEvents();
+		CowValue temp = findEvent("Inseminering", reproductionEvents);
+		cow.addReproduction(new CowValue("Insemination", (temp != null ? temp.getValue() : "NaN")));
 
 		// 3: Dry off
         String calvingNumberStr = main.getString("LastCalvingNumber");
 		int calveNumber = parseInt(calvingNumberStr);
         int tempInt = CowMath.calculateDryOff(main.get("ExpectedCalvingDate").toString(), calveNumber);
-		cow.addReproduction(new com.eaaa.glasscow.model.CowValue("Dry Off", "in " + tempInt + " days", (tempInt < 0 ? RingColor.RED : RingColor.GREEN)));
+		cow.addReproduction(new CowValue("Dry Off", "in " + tempInt + " days", (tempInt < 0 ? RingColor.RED : RingColor.GREEN)));
 
 		// 4: Calving
-		cow.addReproduction(new com.eaaa.glasscow.model.CowValue("Calving", "in " + CowMath.daysSinceAbsolute(main.get("ExpectedCalvingDate").toString()) + " days"));
+		cow.addReproduction(new CowValue("Calving", "in " + CowMath.daysSinceAbsolute(main.get("ExpectedCalvingDate").toString()) + " days"));
 
 		// 5: Latest Calving
-		cow.addReproduction(new com.eaaa.glasscow.model.CowValue("Last Calving", CowMath.daysSince(main.get("LastCalvingDate").toString()) + " days ago"));
+		cow.addReproduction(new CowValue("Last Calving", CowMath.daysSince(main.get("LastCalvingDate").toString()) + " days ago"));
 
 		// 6: calve number
-		cow.addReproduction(new com.eaaa.glasscow.model.CowValue("Calve Number", "" + calveNumber));
+		cow.addReproduction(new CowValue("Calve Number", "" + calveNumber));
 
 		// 7: Lactation
 		// cow.addReproduction(new CowValue("Lactation", "" + main.get("LactationValue")));
@@ -139,7 +139,7 @@ public class JSONCowParser {
         return result;
     }
 
-	private static com.eaaa.glasscow.model.CowValue findEvent(String target, List<com.eaaa.glasscow.model.CowValue> events) {
+	private static CowValue findEvent(String target, List<CowValue> events) {
 		int i = 0;
 		while (i < events.size()) {
 			CowValue temp = events.get(i);
