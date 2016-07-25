@@ -88,7 +88,7 @@ public class CowDatabase extends SQLiteOpenHelper {
     public void createSampleCows() {
         getWritableDatabase();
         Log.d("GlassCow:CowDatabase", "Step2");
-        com.eaaa.glasscow.service.CreateCows cc = new com.eaaa.glasscow.service.CreateCows(db);
+        CreateCows cc = new CreateCows(db);
         cc.createCow1();
         Log.d("GlassCow:CowDatabase", "Step3");
         cc.createCow2();

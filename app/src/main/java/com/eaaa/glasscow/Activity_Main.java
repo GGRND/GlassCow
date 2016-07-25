@@ -31,7 +31,7 @@ import com.google.android.glass.widget.CardScrollView;
 import java.io.*;
 
 public class Activity_Main extends Activity implements AsyncCowResponse,
-		GestureDetector.BaseListener, Serializable {
+		GestureDetector.BaseListener {
 
 	private static final int SPEECH_REQUEST = 0;
 	private static final int SCAN_REQUEST = 1;
