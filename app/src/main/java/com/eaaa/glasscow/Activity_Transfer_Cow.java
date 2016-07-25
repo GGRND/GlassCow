@@ -119,6 +119,7 @@ public class Activity_Transfer_Cow extends Activity {
                 if (menuNumberCounter == 1) {
                     setCurrentDate();
                     setCertainViewVisible();
+                    
                 }
                 if (menuNumberCounter == 2) {
                     remoteDatabase.sendObservations();
