@@ -2,12 +2,15 @@ package com.eaaa.glasscow.service;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.eaaa.glasscow.Activity_Dead_Cow;
+import com.eaaa.glasscow.Activity_Kill_Cow;
 import com.eaaa.glasscow.Activity_Main;
 import com.eaaa.glasscow.Configuration;
 import com.eaaa.glasscow.model.CowObservation;
@@ -40,6 +43,7 @@ public class RemoteDatabase {
     private static String Endpoint;
     private static String Audience;
     private static String rst;
+    private static String whichClass;
 
     class PriorityExecutor implements Executor {
         private final int priority;
@@ -118,6 +122,21 @@ public class RemoteDatabase {
 
             //Test http response code
             int responseCode = con.getResponseCode();
+            Log.d("ResponseCode: ", String.valueOf(responseCode));
+
+            if (!whichClass.isEmpty()) {
+                if (whichClass.equals("killed")) {
+                    Intent intent = new Intent();
+                    intent.putExtra("response_code", responseCode);
+                    Activity_Kill_Cow.getAppContext().sendBroadcast(intent);
+                }
+                if (whichClass.equals("deceased")) {
+                    Intent intent = new Intent();
+                    intent.putExtra("response_code", responseCode);
+                    Activity_Dead_Cow.getAppContext().sendBroadcast(intent);
+                }
+            }
+
             if (responseCode / 100 != 2)
             {
                 throw new IOException("Non-2xx status code: " + responseCode + " " + con.getResponseMessage());
@@ -353,7 +372,8 @@ public class RemoteDatabase {
 
 
     //Parser om et dyr er aflivet, slagtning, whatever.
-    public void sendDeath(final String herdId, final String animalNumber, final long transferCodeId, final String date) {
+    public void sendDeath(final Integer herdId, final Long animalNumber, final long transferCodeId, final String date, final String whichClass) {
+        this.whichClass = whichClass;
         if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
@@ -369,7 +389,7 @@ public class RemoteDatabase {
             doSendDeath(herdId, animalNumber, transferCodeId, date);
         }
     }
-    private void doSendDeath(final String herdId, final String animalNumber, final long transferCodeId, final String date) {
+    private void doSendDeath(final Integer herdId, final Long animalNumber, final long transferCodeId, final String date) {
         //Should make it possible to debug this method
         //android.os.Debug.waitForDebugger();
 
@@ -403,12 +423,12 @@ public class RemoteDatabase {
             @Override
             void callBack(String result) throws JSONException {
                 //Log.d("Sent obs response", result);
-                doSendDeath(herdId, animalNumber, transferCodeId, date);
+
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
 
-    public void send2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
+    public void send2Herd(final String herdId, final Integer newHerdID, final String animalNumber, final long transferCodeId, final String date) {
         if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
@@ -424,7 +444,7 @@ public class RemoteDatabase {
             doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
         }
     }
-    private void doSend2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
+    private void doSend2Herd(final String herdId, final Integer newHerdID, final String animalNumber, final long transferCodeId, final String date) {
         //Should make it possible to debug this method
         //android.os.Debug.waitForDebugger();
 

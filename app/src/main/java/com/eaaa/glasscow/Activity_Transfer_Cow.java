@@ -67,12 +67,12 @@ public class Activity_Transfer_Cow extends Activity {
 
 
     private void initElements() {
-        cowIDView = (TextView) findViewById(R.id.CowID_aflivet);
-        dateTextView = (TextView) findViewById(R.id.date_aflivet);
-        firstDescription = (TextView) findViewById(R.id.first_description_aflivet);
-        secondDescription = (TextView) findViewById(R.id.second_description_aflivet);
-        destructionView = (RelativeLayout) findViewById(R.id.destruktion_aflivet);
-        dateView = (RelativeLayout) findViewById(R.id.date_text_aflivet);
+        cowIDView = (TextView) findViewById(R.id.CowID_transfer);
+        dateTextView = (TextView) findViewById(R.id.date_transfer);
+        firstDescription = (TextView) findViewById(R.id.first_description_transfer);
+        secondDescription = (TextView) findViewById(R.id.second_description_transfer);
+        destructionView = (RelativeLayout) findViewById(R.id.destruktion_transfer);
+        dateView = (RelativeLayout) findViewById(R.id.date_text_transfer);
     }
 
     private void setElements() {
