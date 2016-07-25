@@ -76,11 +76,11 @@ public class RemoteDatabase {
         // onPostExecute displays the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-                try {
-                    callBack(result);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            try {
+                callBack(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         //Parameters: String url, String body, HeaderName1, HeaderValue1, HeaderName2, HeaderValue2 ...
@@ -198,9 +198,9 @@ public class RemoteDatabase {
         return RemoteDatabase.instance;
     }
 
-   private RemoteDatabase(Activity_Main context) {
-       RemoteDatabase.context = context;
-   }
+    private RemoteDatabase(Activity_Main context) {
+        RemoteDatabase.context = context;
+    }
 
     private boolean isTokenRequestNeeded() {
         Configuration conf = context.getConfiguration();
@@ -275,26 +275,26 @@ public class RemoteDatabase {
     /**
      *
      */
-    public void sendObservations(final SQLiteDatabase db, final ArrayList<CowObservation> observations) {
+    public void sendObservations() {
         if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
                 @Override
                 void callBack(String result) {
                     if (!isTokenRequestNeeded())
-                        doSendObservations(db, observations);
+                        doSendObservations();
                 }
             }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
         }
         else
         {
-            doSendObservations(db, observations);
+            doSendObservations();
         }
     }
 
-    private void doSendObservations(final SQLiteDatabase db, final ArrayList<CowObservation> observations) {
+    private void doSendObservations() {
         Configuration conf = context.getConfiguration();
-
+/*
         //Initialize first observation to sent
         int i;
         for (i = 0; i<observations.size() && observations.get(i).getValue(FIELD_Sent)==Boolean.TRUE; i++);
@@ -307,28 +307,28 @@ public class RemoteDatabase {
         Values.put(FIELD_Sent, true);
         db.update(TABLE_OBSERVATION, Values, "obs_id=?", new String[]{obs.getObservationId()});
         obs.setValue(FIELD_Sent, true);
-
+*/
         //send observation to backend database
         ArrayList<String> params = new ArrayList<String>();
         params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
         params.add("{\"$id\":\"1\"," +
-                "\"AnimalId\":\"" + obs.getAnimalId() + "\"," +
-                "\"HerdId\":\"" + obs.getHerdId() + "\"," +
-                "\"ObservationTypeId\":\"" + (Integer.valueOf(obs.getTypeId()).intValue()+1) + "\"," +
+                "\"AnimalId\":\"" + 1009742025 + "\"," +
+                "\"HerdId\":\"" + 6362512 + "\"," +
+                "\"ObservationTypeId\":\"" + 1 + "\"," +
                 "\"ObservationDate\":\"0001-01-01T00:00:00\"," + // "0001-01-01T00:00:00"
-                "\"LeftFront\":" + String.valueOf(obs.getValue(FIELD_LeftFront)) + "," +
-                "\"RightFront\":" + String.valueOf(obs.getValue(FIELD_RightFront)) + "," +
-                "\"LeftBack\":" + String.valueOf(obs.getValue(FIELD_LeftBack)) + "," +
-                "\"RightBack\":" + String.valueOf(obs.getValue(FIELD_RightBack)) + "," +
-                "\"Clots\":" + String.valueOf(obs.getValue(FIELD_Clots)) + "," +
-                "\"VisibleAbnormalities\":" + String.valueOf(obs.getValue(FIELD_VisibleAbnormalities)) + "," +
-                "\"Sore\":" + String.valueOf(obs.getValue(FIELD_Sore)) + "," +
-                "\"Swollen\":" + String.valueOf(obs.getValue(FIELD_Swollen)) + "," +
-                "\"Limp\":" + String.valueOf(obs.getValue(FIELD_Limp)) + "," +
-                "\"Mucus\":" + String.valueOf(obs.getValue(FIELD_Mucus)) + "," +
-                "\"StandingHeat\":" + String.valueOf(obs.getValue(FIELD_StandingHeat)) + "," +
-                "\"BleedOff\":" + String.valueOf(obs.getValue(FIELD_BleedOff)) + "," +
-                "\"Mount\":" + String.valueOf(obs.getValue(FIELD_Mount)) + "}");
+                "\"LeftFront\":" + true + "," +
+                "\"RightFront\":" + true + "," +
+                "\"LeftBack\":" + false + "," +
+                "\"RightBack\":" + false + "," +
+                "\"Clots\":" + null + "," +
+                "\"VisibleAbnormalities\":" + null + "," +
+                "\"Sore\":" + null + "," +
+                "\"Swollen\":" + null + "," +
+                "\"Limp\":" + null + "," +
+                "\"Mucus\":" + null + "," +
+                "\"StandingHeat\":" + null + "," +
+                "\"BleedOff\":" + null + "," +
+                "\"Mount\":" + null + "}");
 
         params.add("Authorization");
         params.add("SAML " + token);
@@ -346,59 +346,40 @@ public class RemoteDatabase {
             @Override
             void callBack(String result) throws JSONException {
                 Log.d("Sent obs response", result);
-                doSendObservations(db, observations);
+                doSendObservations();
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
 
 
     //Parser om et dyr er aflivet, slagtning, whatever.
-<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
-        public void sendDeath(final String herdId, final String animalNumber, final long transferCodeId, final String date) {
-=======
-        public void sendDeath(final String herdId, final long animalID, final String transferCodeId, final String date) {
->>>>>>> no message
-            if (isTokenRequestNeeded())
-            {
-                new retrieveTokenTask() {
-                    @Override
-                    void callBack(String result) {
-                        if (!isTokenRequestNeeded())
-<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
-                            doSendDeath(herdId, animalNumber, transferCodeId, date);
-=======
-                            doSendDeath(herdId, animalID, transferCodeId, date);
->>>>>>> no message
-                    }
-                }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
-            }
-            else
-            {
-<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
-                doSendDeath(herdId, animalNumber, transferCodeId, date);
-            }
+    public void sendDeath(final String herdId, final String animalNumber, final long transferCodeId, final String date) {
+        if (isTokenRequestNeeded())
+        {
+            new retrieveTokenTask() {
+                @Override
+                void callBack(String result) {
+                    if (!isTokenRequestNeeded())
+                        doSendDeath(herdId, animalNumber, transferCodeId, date);
+                }
+            }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
         }
+        else
+        {
+            doSendDeath(herdId, animalNumber, transferCodeId, date);
+        }
+    }
     private void doSendDeath(final String herdId, final String animalNumber, final long transferCodeId, final String date) {
         //Should make it possible to debug this method
         //android.os.Debug.waitForDebugger();
 
-=======
-                doSendDeath(herdId, animalID, transferCodeId, date);
-            }
-        }
-    private void doSendDeath(final String herdId, final long animalID, final String transferCodeId, final String date) {
->>>>>>> no message
         Configuration conf = context.getConfiguration();
 
-        //send death registry to backend database
+        //send observation to backend database
         ArrayList<String> params = new ArrayList<String>();
         params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
         params.add("{\"$id\":\"1\"," +
-<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
                 "\"AnimalId\":\"" + animalNumber + "\"," +
-=======
-                "\"AnimalId\":\"" + animalID + "\"," +
->>>>>>> no message
                 "\"FromHerdNumber\":\"" + herdId + "\"," +
                 "\"TransferDate\":\"" + date + "\"," +
                 "\"TransferCodeId\":\"" + transferCodeId + "\"," +
@@ -421,13 +402,63 @@ public class RemoteDatabase {
         new postSecureRequestTask() {
             @Override
             void callBack(String result) throws JSONException {
-<<<<<<< 7626130d66636f3aab5863273f1339cfc5dbc906
                 //Log.d("Sent obs response", result);
                 doSendDeath(herdId, animalNumber, transferCodeId, date);
-=======
-                Log.d("Sent obs response", result);
-                doSendDeath(herdId, animalID, transferCodeId, date);
->>>>>>> no message
+            }
+        }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
+    }
+
+    public void send2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
+        if (isTokenRequestNeeded())
+        {
+            new retrieveTokenTask() {
+                @Override
+                void callBack(String result) {
+                    if (!isTokenRequestNeeded())
+                        doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
+                }
+            }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
+        }
+        else
+        {
+            doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
+        }
+    }
+    private void doSend2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
+        //Should make it possible to debug this method
+        //android.os.Debug.waitForDebugger();
+
+        Configuration conf = context.getConfiguration();
+
+        //send observation to backend database
+        ArrayList<String> params = new ArrayList<String>();
+        params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
+        params.add("{\"$id\":\"1\"," +
+                "\"AnimalId\":\"" + animalNumber + "\"," +
+                "\"FromHerdNumber\":\"" + herdId + "\"," +
+                "\"TransferDate\":\"" + date + "\"," +
+                "\"TransferCodeId\":\"" + transferCodeId + "\"," +
+                "\"TransferCause1Id\":\"" + null + "\"," +
+                "\"ToHerdNumber\":\"" + newHerdID + "}");
+
+        params.add("Authorization");
+        params.add("SAML " + token);
+
+        params.add("Accept-Encoding");
+        params.add("gzip, deflate");
+
+        params.add("Content-Type");
+        params.add("application/json; charset=utf-8");
+
+        params.add("Host");
+        params.add(conf.get_Host());
+
+
+        new postSecureRequestTask() {
+            @Override
+            void callBack(String result) throws JSONException {
+                //Log.d("Sent obs response", result);
+                doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }

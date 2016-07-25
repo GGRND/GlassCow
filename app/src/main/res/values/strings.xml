@@ -35,7 +35,7 @@
 
     <!-- Menu items for "omsætninger -->
     <string name="entry">Entry</string>
-    <string name="departure">Departure</string>
+    <string name="transfer">Transfer</string>
     <string name="slaughter">Slaughter</string>
     <string name="dead">Dead</string>
     <string name="killed">Killed</string>

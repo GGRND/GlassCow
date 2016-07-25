@@ -201,6 +201,11 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
 		startActivity(intent);
 	}
+	public void moveCowToHerd() {
+		Intent intent = new Intent(this, Activity_Transfer_Cow.class);
+
+		startActivity(intent);
+	}
 
 	/**
 	 * Opdaterer til den nye ko med tallet fra identifyCowWithVoice()

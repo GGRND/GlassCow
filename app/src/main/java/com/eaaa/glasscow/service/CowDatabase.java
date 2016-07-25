@@ -78,7 +78,7 @@ public class CowDatabase extends SQLiteOpenHelper {
     }
 
     public void sentObservationsToRemote(ArrayList<CowObservation> observations) {
-        RemoteDatabase.getInstance(ctx).sendObservations(db,observations);
+        RemoteDatabase.getInstance(ctx).sendObservations();
     }
 
     public SQLiteDatabase getDb() {

@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eaaa.glasscow.model.Cow;
-import com.eaaa.glasscow.service.CowDatabase;
 import com.eaaa.glasscow.service.RemoteDatabase;
 import com.google.android.glass.view.WindowUtils;
 
@@ -18,9 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Winther on 30/06/16.
+ * Created by ThinkNick on 22-07-2016.
  */
-public class Activity_Dead_Cow extends Activity {
+public class Activity_Transfer_Cow extends Activity {
 
     private TextView cowIDView, dateTextView, firstDescription, secondDescription;
     private RelativeLayout destructionView, dateView;
@@ -46,7 +45,7 @@ public class Activity_Dead_Cow extends Activity {
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_dead);
+        setContentView(R.layout.activity_transfer);
         ctx = new Activity_Main();
         remoteDatabase = RemoteDatabase.getInstance(ctx);
         initElements();
@@ -109,9 +108,6 @@ public class Activity_Dead_Cow extends Activity {
         }
     }
 
-    public void updateViews() {
-
-    }
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {

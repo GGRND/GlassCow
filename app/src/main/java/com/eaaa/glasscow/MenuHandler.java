@@ -27,7 +27,7 @@ public class MenuHandler {
 
     //Numbers for "omsætninger" menu items
     private static final int MENU_TURNOVER_ENTRY = 13;
-    private static final int MENU_TURNOVER_DEPARTURE = 14;
+    private static final int MENU_TURNOVER_TRANSFER = 14;
     private static final int MENU_TURNOVER_SLAUGHTER = 15;
     private static final int MENU_TURNOVER_DEAD = 16;
     private static final int MENU_TURNOVER_KILLED = 17;
@@ -114,8 +114,8 @@ public class MenuHandler {
 
                 break;
 
-            case MENU_TURNOVER_DEPARTURE:
-
+            case MENU_TURNOVER_TRANSFER:
+                activity.moveCowToHerd();
                 break;
 
             case MENU_TURNOVER_SLAUGHTER:
@@ -149,7 +149,7 @@ public class MenuHandler {
 
     public static void turnoverMenuItems(Menu menu) {
         menu.add(Menu.NONE, MENU_TURNOVER_ENTRY, Menu.NONE, R.string.entry);
-        menu.add(Menu.NONE, MENU_TURNOVER_DEPARTURE, Menu.NONE, R.string.departure);
+        menu.add(Menu.NONE, MENU_TURNOVER_TRANSFER, Menu.NONE, R.string.transfer);
         menu.add(Menu.NONE, MENU_TURNOVER_SLAUGHTER, Menu.NONE, R.string.slaughter);
         menu.add(Menu.NONE, MENU_TURNOVER_DEAD, Menu.NONE, R.string.dead);
         menu.add(Menu.NONE, MENU_TURNOVER_KILLED, Menu.NONE, R.string.killed);

@@ -13,6 +13,7 @@ import com.eaaa.glasscow.model.JSONCowParser;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -213,4 +214,5 @@ public class CowService {
         Collections.sort(sortedList);
         return sortedList;
     }
+
 }
