@@ -13,9 +13,10 @@ import java.util.Date;
 
 public abstract class Transfer_Cow extends Activity {
 
-    private String date;
+    private String date, herdId, shortAnimalNumber, animalNumber;
 
     private Menu menu;
+    private Cow cow;
 
     /**
      * Initialises the elements in the current view
@@ -30,7 +31,12 @@ public abstract class Transfer_Cow extends Activity {
     /**
      * Gets the required information about the current cow
      */
-    public abstract void getCowInfo();
+    public void getCowInfo() {
+        cow = com.eaaa.glasscow.Activity_Main.cow;
+        herdId = cow.getHerdId();
+        shortAnimalNumber = cow.getShortNumber();
+        animalNumber = cow.getFullNumber();
+    }
 
     /**
      * Sets the textview for dates to the current date

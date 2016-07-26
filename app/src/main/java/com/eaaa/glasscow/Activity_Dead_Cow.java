@@ -46,16 +46,6 @@ public class Activity_Dead_Cow extends Transfer_Cow {
         setElements();
     }
 
-    /**
-     * Gets the required information about the current cow
-     */
-    public void getCowInfo() {
-        cow = com.eaaa.glasscow.Activity_Main.cow;
-        herdId = cow.getHerdId();
-        shortAnimalNumber = cow.getShortNumber();
-        animalNumber = cow.getFullNumber();
-    }
-
     public void initElements() {
         cowIDView = (TextView) findViewById(R.id.CowID_deadCow);
         dateTextView = (TextView) findViewById(R.id.date_deadCow);
