@@ -21,6 +21,7 @@ import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.service.CowService;
 import com.eaaa.glasscow.tools.CowScrollView;
 import com.eaaa.glasscow.tools.CowScrollViewAdapter;
+import com.eaaa.glasscow.transfer_cows.Activity_Dead_Cow;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;

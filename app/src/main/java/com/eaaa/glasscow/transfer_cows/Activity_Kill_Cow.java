@@ -1,4 +1,4 @@
-package com.eaaa.glasscow;
+package com.eaaa.glasscow.transfer_cows;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,25 +7,20 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.eaaa.glasscow.model.Cow;
+import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.MenuHandler;
+import com.eaaa.glasscow.R;
 import com.eaaa.glasscow.service.RemoteDatabase;
-import com.eaaa.glasscow.transfer_cows.Transfer_Cow;
 import com.google.android.glass.view.WindowUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-public class Activity_Kill_Cow extends Transfer_Cow {
+public class Activity_Kill_Cow extends Transfer_Interface {
 
     private TextView cowIDView, dateTextView, firstDescription, secondDescription;
     private RelativeLayout destructionView, dateView;
 
     private RemoteDatabase remoteDatabase;
-    private Cow cow;
 
     private final long transferCodeId = 19;
-    private String animalNumber;
-    private String herdId, shortAnimalNumber;
     private int menuNumberCounter = 1;
 
     // Menu item IDs:
@@ -57,7 +52,7 @@ public class Activity_Kill_Cow extends Transfer_Cow {
     }
 
     public void setElements() {
-        cowIDView.setText(removeZero(shortAnimalNumber));
+        cowIDView.setText(removeZero(super.getShortAnimalNumber()));
     }
 
 
@@ -84,8 +79,8 @@ public class Activity_Kill_Cow extends Transfer_Cow {
                     setCertainViewVisible();
                 }
                 if (menuNumberCounter == 2) {
-                    remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(herdId)),
-                            Long.valueOf(animalNumber), transferCodeId, super.getDate(), "killed", this.getApplicationContext());
+                    remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(super.getHerdId())),
+                            Long.valueOf(super.getAnimalNumber()), transferCodeId, super.getDate(), "killed", this.getApplicationContext());
                 }
                 menuNumberCounter++;
                 break;

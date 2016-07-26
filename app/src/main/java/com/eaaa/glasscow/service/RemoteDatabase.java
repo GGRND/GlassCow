@@ -1,9 +1,7 @@
 package com.eaaa.glasscow.service;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -12,11 +10,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.eaaa.glasscow.Activity_Dead_Cow;
-import com.eaaa.glasscow.Activity_Kill_Cow;
 import com.eaaa.glasscow.Activity_Main;
 import com.eaaa.glasscow.Configuration;
-import com.eaaa.glasscow.model.CowObservation;
 import com.google.android.glass.media.Sounds;
 
 import org.json.JSONArray;
@@ -35,7 +30,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static com.eaaa.glasscow.service.DatabaseFields.*;
 
-import java.util.StringTokenizer;
 import      java.util.concurrent.Executor;
 /**
  * Created by morten on 17/03/15.

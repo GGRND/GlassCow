@@ -11,7 +11,7 @@ import com.eaaa.glasscow.model.Cow;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public abstract class Transfer_Cow extends Activity {
+public abstract class Transfer_Interface extends Activity {
 
     private String date, herdId, shortAnimalNumber, animalNumber;
 
@@ -79,5 +79,17 @@ public abstract class Transfer_Cow extends Activity {
 
     public void setMenu(Menu menu) {
         this.menu = menu;
+    }
+
+    public String getShortAnimalNumber() {
+        return shortAnimalNumber;
+    }
+
+    public String getAnimalNumber() {
+        return animalNumber;
+    }
+
+    public String getHerdId() {
+        return herdId;
     }
 }

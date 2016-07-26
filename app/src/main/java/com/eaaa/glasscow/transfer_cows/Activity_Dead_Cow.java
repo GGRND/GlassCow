@@ -1,4 +1,4 @@
-package com.eaaa.glasscow;
+package com.eaaa.glasscow.transfer_cows;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,22 +8,20 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.eaaa.glasscow.model.Cow;
+import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.MenuHandler;
+import com.eaaa.glasscow.R;
 import com.eaaa.glasscow.service.RemoteDatabase;
-import com.eaaa.glasscow.transfer_cows.Transfer_Cow;
 import com.google.android.glass.view.WindowUtils;
 
-public class Activity_Dead_Cow extends Transfer_Cow {
+public class Activity_Dead_Cow extends Transfer_Interface {
 
     private TextView cowIDView, dateTextView, firstDescription, secondDescription;
     private RelativeLayout destructionView, dateView;
 
     private RemoteDatabase remoteDatabase;
-    private Cow cow;
 
     private final long transferCodeId = 9;
-    private String animalNumber;
-    private String date, herdId, shortAnimalNumber;
     private int menuNumberCounter = 1;
 
     // Menu item ids:
@@ -56,7 +54,7 @@ public class Activity_Dead_Cow extends Transfer_Cow {
     }
 
     public void setElements() {
-        cowIDView.setText(removeZero(shortAnimalNumber));
+        cowIDView.setText(removeZero(super.getShortAnimalNumber()));
     }
 
     /**
@@ -83,8 +81,8 @@ public class Activity_Dead_Cow extends Transfer_Cow {
                     setCertainViewVisible();
                 }
                 if (menuNumberCounter == 2) {
-                    remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(herdId)),
-                            Long.valueOf(animalNumber), transferCodeId, super.getDate(), "dead", this.getApplicationContext());
+                    remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(super.getHerdId())),
+                            Long.valueOf(super.getAnimalNumber()), transferCodeId, super.getDate(), "dead", this.getApplicationContext());
                 }
                 menuNumberCounter++;
                 break;
