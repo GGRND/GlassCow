@@ -454,7 +454,7 @@ public class RemoteDatabase {
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }
 
-    public void send2Herd(final String herdId, final Integer newHerdID, final String animalNumber, final long transferCodeId, final String date) {
+    public void send2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
         if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
@@ -470,7 +470,7 @@ public class RemoteDatabase {
             doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
         }
     }
-    private void doSend2Herd(final String herdId, final Integer newHerdID, final String animalNumber, final long transferCodeId, final String date) {
+    private void doSend2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
         //Should make it possible to debug this method
         //android.os.Debug.waitForDebugger();
 

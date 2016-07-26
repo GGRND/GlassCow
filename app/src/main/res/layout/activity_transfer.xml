@@ -19,10 +19,46 @@
         android:layout_toLeftOf="@+id/CowID_transfer"
         />
     <TextView
+        android:id="@+id/HerdText_transfer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current herd: "
+        android:textSize="30dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="35dp"
+        android:layout_toLeftOf="@+id/HerdID_transfer"
+        />
+    <TextView
+        android:id="@+id/NHerdText_transfer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New herd: "
+        android:textSize="30dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="65dp"
+        android:layout_toLeftOf="@+id/NHerdID_transfer"
+        />
+    <TextView
         android:id="@+id/CowID_transfer"
         android:layout_width="90dp"
         android:layout_height="wrap_content"
         android:textSize="35dp"
+        android:layout_alignParentRight="true"
+        />
+    <TextView
+        android:id="@+id/HerdID_transfer"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:textSize="35dp"
+        android:paddingTop="35dp"
+        android:layout_alignParentRight="true"
+        />
+    <TextView
+        android:id="@+id/NHerdID_transfer"
+        android:layout_width="190dp"
+        android:layout_height="wrap_content"
+        android:textSize="35dp"
+        android:paddingTop="65dp"
         android:layout_alignParentRight="true"
         />
 
@@ -30,10 +66,8 @@
         android:id="@+id/date_text_transfer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/CowText_transfer"
-        android:layout_alignParentRight="true"
+        android:layout_below="@+id/NHerdID_transfer"
         android:paddingLeft="10dp"
-        android:layout_marginTop="20dp"
         android:visibility="invisible">
 
         <TextView
@@ -54,12 +88,13 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/destruktion_transfer"
+        android:id="@+id/herd_transfer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date_text_transfer"
         android:layout_alignParentRight="true"
         android:paddingLeft="10dp"
+        android:text="Er flytning korrekt?"
         android:layout_marginTop="10dp"
         android:visibility="invisible">
 
@@ -84,7 +119,6 @@
         android:id="@+id/first_description_transfer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/first_description_transfer"
         android:textSize="25dp"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/CowText_transfer"
@@ -96,7 +130,6 @@
         android:id="@+id/second_description_transfer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/second_description_transfer"
         android:textSize="25dp"
         android:layout_below="@+id/destruktion_transfer"
         android:layout_marginRight="10dp"
