@@ -3,13 +3,16 @@ package com.eaaa.glasscow;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.service.RemoteDatabase;
@@ -17,6 +20,8 @@ import com.google.android.glass.view.WindowUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class Activity_Dead_Cow extends Activity {
 
@@ -30,7 +35,7 @@ public class Activity_Dead_Cow extends Activity {
     private static Context context;
     private BroadcastReceiver mBroadcastReceiver;
 
-    private final long transferCodeId = 19;
+    private final long transferCodeId = 9;
     private String animalNumber;
     private String date, herdId, shortAnimalNumber;
     private int menuNumberCounter = 1;
@@ -43,7 +48,24 @@ public class Activity_Dead_Cow extends Activity {
     protected void onResume() {
         super.onResume();
 
-        
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                System.out.println("Så langt så godt");
+                Bundle bundle = intent.getExtras();
+                if (!bundle.isEmpty()) {
+                    int responseCode = bundle.getInt("response_code");
+
+                    if (responseCode != 200) {
+                        Toast.makeText(Activity_Dead_Cow.this, "Something went wrong. Response_Code: " + responseCode, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(Activity_Dead_Cow.getAppContext().getApplicationContext(), "Cow successfully removed from database.", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            }
+        };
+        mBroadcastReceiver.goAsync();
     }
 
     @Override
@@ -72,7 +94,6 @@ public class Activity_Dead_Cow extends Activity {
         shortAnimalNumber = cow.getShortNumber();
         animalNumber = cow.getFullNumber();
     }
-
 
     private void initElements() {
         cowIDView = (TextView) findViewById(R.id.CowID_deadCow);
@@ -105,6 +126,7 @@ public class Activity_Dead_Cow extends Activity {
         dateView.setVisibility(View.VISIBLE);
     }
 
+
     /**
      * Toggles visibility of certain views given the context of the field variable menuNumberCounter
      */
@@ -131,7 +153,7 @@ public class Activity_Dead_Cow extends Activity {
                 }
                 if (menuNumberCounter == 2) {
                     remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(herdId)),
-                            Long.valueOf(animalNumber), transferCodeId, date, "killed");
+                            Long.valueOf(animalNumber), transferCodeId, date, "dead", this.getApplicationContext());
                 }
                 menuNumberCounter++;
                 break;

@@ -1,5 +1,6 @@
 package com.eaaa.glasscow.service;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.eaaa.glasscow.Activity_Dead_Cow;
 import com.eaaa.glasscow.Activity_Kill_Cow;
@@ -31,6 +33,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import static com.eaaa.glasscow.service.DatabaseFields.*;
 
+import java.util.StringTokenizer;
 import      java.util.concurrent.Executor;
 /**
  * Created by morten on 17/03/15.
@@ -43,7 +46,12 @@ public class RemoteDatabase {
     private static String Endpoint;
     private static String Audience;
     private static String rst;
+
+
+    private static int responseCode;
+    private static boolean tokenOrResponse = false;
     private static String whichClass;
+    private static Context currentAppContext;
 
     class PriorityExecutor implements Executor {
         private final int priority;
@@ -67,7 +75,6 @@ public class RemoteDatabase {
 
         @Override
         protected String doInBackground(ArrayList<String>... parameters) {
-
             // params comes from the execute() call: params[0] is the url.
             try {
                 return postSecureRequest(parameters[0]);
@@ -85,11 +92,32 @@ public class RemoteDatabase {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            if (!whichClass.isEmpty()) {
+                if (tokenOrResponse) {
+
+                    if (whichClass.equals("dead") || whichClass.equals("killed")) {
+                        if (responseCode != 200) {
+                            Toast.makeText(currentAppContext, "Something went wrong, response_code: " + responseCode, Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            Toast.makeText(currentAppContext, "The cow was successfully removed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
         }
 
         //Parameters: String url, String body, HeaderName1, HeaderValue1, HeaderName2, HeaderValue2 ...
         protected String postSecureRequest(ArrayList<String> params) throws IOException {
             StringBuffer response = new StringBuffer();
+
+            //Manages whether it's a token or something else that's being handled
+            if (whichClass.equals("dead") || whichClass.equals("killed")) {
+                if (tokenOrResponse == false) {
+                    tokenOrResponse = true;
+                }
+            }
 
             //Test if connection is possible
             ConnectivityManager connMgr = (ConnectivityManager)
@@ -120,22 +148,13 @@ public class RemoteDatabase {
                 return "";
             }
 
+            //Should make it possible to debug this method
+            //android.os.Debug.waitForDebugger();
+
             //Test http response code
-            int responseCode = con.getResponseCode();
+            responseCode = con.getResponseCode();
             Log.d("ResponseCode: ", String.valueOf(responseCode));
 
-            if (!whichClass.isEmpty()) {
-                if (whichClass.equals("killed")) {
-                    Intent intent = new Intent();
-                    intent.putExtra("response_code", responseCode);
-                    Activity_Kill_Cow.getAppContext().sendBroadcast(intent);
-                }
-                if (whichClass.equals("deceased")) {
-                    Intent intent = new Intent();
-                    intent.putExtra("response_code", responseCode);
-                    Activity_Dead_Cow.getAppContext().sendBroadcast(intent);
-                }
-            }
 
             if (responseCode / 100 != 2)
             {
@@ -372,8 +391,10 @@ public class RemoteDatabase {
 
 
     //Parser om et dyr er aflivet, slagtning, whatever.
-    public void sendDeath(final Integer herdId, final Long animalNumber, final long transferCodeId, final String date, final String whichClass) {
+    public void sendDeath(final Integer herdId, final Long animalNumber, final long transferCodeId,
+                          final String date, final String whichClass, final Context appContext) {
         this.whichClass = whichClass;
+        currentAppContext = appContext;
         if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
@@ -397,7 +418,7 @@ public class RemoteDatabase {
 
         //send observation to backend database
         ArrayList<String> params = new ArrayList<String>();
-        params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
+        params.add(conf.get_Audience() + "CattleWebApi/AnimalTransferPublicOperations/UpdateAnimalTransfersPublic?AgriBusinessId=" + conf.get_AgriBusinessId());
         params.add("{\"$id\":\"1\"," +
                 "\"AnimalId\":\"" + animalNumber + "\"," +
                 "\"FromHerdNumber\":\"" + herdId + "\"," +

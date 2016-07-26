@@ -118,7 +118,7 @@ public class Activity_Kill_Cow extends Activity {
                 }
                 if (menuNumberCounter == 2) {
                     remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(herdId)),
-                            Long.valueOf(animalNumber), transferCodeId, date, "killed");
+                            Long.valueOf(animalNumber), transferCodeId, date, "killed", this.getApplicationContext());
                 }
                 menuNumberCounter++;
                 break;
