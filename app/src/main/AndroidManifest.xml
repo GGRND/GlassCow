@@ -45,8 +45,9 @@
         <activity android:name=".Activity_Observation" />
         <activity android:name=".Activity_AllObservations" />
         <activity android:name=".Identify_CowNumber" />
-        <activity android:name=".transfer_cows.Activity_Dead_Cow" />
-        <activity android:name=".Activity_Transfer_Cow" />
+        <activity android:name=".Activity_Dead_Cow" />
+        <activity android:name=".transfer_cows.Activity_Transfer_Cow" />
+
         <activity
             android:name=".ScanBarCodeActivity"
             android:label="@string/title_activity_scan_bar_code">
@@ -54,8 +55,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eaaa.glasscow.Activity_Main" />
         </activity>
-        <activity android:name=".transfer_cows.Activity_Kill_Cow" />
-        <activity android:name=".transfer_cows.Activity_Slaughter_Cow"></activity>
+        <activity android:name=".Activity_Kill_Cow"></activity>
     </application>
 
 </manifest>

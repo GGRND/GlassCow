@@ -1,4 +1,4 @@
-package com.eaaa.glasscow;
+package com.eaaa.glasscow.transfer_cows;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,8 +11,12 @@ import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.MenuHandler;
+import com.eaaa.glasscow.R;
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.service.RemoteDatabase;
+import com.eaaa.glasscow.transfer_cows.Transfer_Cow;
 import com.google.android.glass.view.WindowUtils;
 
 import java.text.SimpleDateFormat;
@@ -22,7 +26,7 @@ import java.util.List;
 /**
  * Created by ThinkNick on 22-07-2016.
  */
-public class Activity_Transfer_Cow extends Activity {
+public class Activity_Transfer_Cow extends Transfer_Cow {
     private String newHerdID = "";
 
     private TextView cowIDView, herdIDView, nherdIDView, dateTextView, firstDescription, secondDescription;
@@ -73,7 +77,7 @@ public class Activity_Transfer_Cow extends Activity {
     /**
      * Gets the required information about the current cow
      */
-    private void getCowInfo() {
+    public void getCowInfo() {
         cow = com.eaaa.glasscow.Activity_Main.cow;
         herdId = cow.getHerdId();
         shortAnimalNumber = cow.getShortNumber();
@@ -81,7 +85,7 @@ public class Activity_Transfer_Cow extends Activity {
     }
 
 
-    private void initElements() {
+    public void initElements() {
         cowIDView = (TextView) findViewById(R.id.CowID_transfer);
         herdIDView = (TextView) findViewById(R.id.HerdID_transfer);
         nherdIDView = (TextView) findViewById(R.id.NHerdID_transfer);
@@ -93,28 +97,15 @@ public class Activity_Transfer_Cow extends Activity {
         dateView = (RelativeLayout) findViewById(R.id.date_text_transfer);
     }
 
-    private void setElements() {
+    public void setElements() {
         cowIDView.setText(removeZero(shortAnimalNumber));
         herdIDView.setText(removeZero(herdId));
 
     }
 
-    private void setMenu(Menu menu) {
-        this.menu = menu;
-    }
 
-    /**
-     * Sets the current date and makes the view visible
-     */
     private void setNewherdID(){
         nherdIDView.setText(newHerdID);
-    }
-
-    private void setCurrentDate() {
-        date = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-
-        dateTextView.setText(date);
-        dateView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -167,13 +158,15 @@ public class Activity_Transfer_Cow extends Activity {
             case MENU_CURRENT_DATE_YES:
                 if (menuNumberCounter == 1) {
                     dateView.setVisibility(View.VISIBLE);
-                    setCurrentDate();
+                    setCurrentDate(dateTextView, dateView);
                     createNumbersInSubMenu(menu);
 
                 }
                 if (menuNumberCounter == 2) {
                     //remoteDatabase.send2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
                 }
+                menuNumberCounter++;
+
                 break;
 
             case MENU_CURRENT_DATE_NO:
@@ -282,9 +275,5 @@ Log.d("Mnunumber", String.valueOf(menuNumberCounter));
         return super.onCreatePanelMenu(featureId, menu);
     }
 
-    private String removeZero(String cowNumber) {
-        int number = Integer.valueOf(cowNumber);
-        String newCowNumber = String.valueOf(number);
-        return newCowNumber;
-    }
+
 }
