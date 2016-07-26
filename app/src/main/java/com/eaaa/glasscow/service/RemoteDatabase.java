@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -16,6 +17,7 @@ import com.eaaa.glasscow.Activity_Kill_Cow;
 import com.eaaa.glasscow.Activity_Main;
 import com.eaaa.glasscow.Configuration;
 import com.eaaa.glasscow.model.CowObservation;
+import com.google.android.glass.media.Sounds;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,12 +97,15 @@ public class RemoteDatabase {
 
             if (!whichClass.isEmpty()) {
                 if (tokenOrResponse) {
+                    AudioManager audio = (AudioManager) currentAppContext.getSystemService(Context.AUDIO_SERVICE);
 
                     if (whichClass.equals("dead") || whichClass.equals("killed")) {
                         if (responseCode != 200) {
+                            audio.playSoundEffect(Sounds.ERROR);
                             Toast.makeText(currentAppContext, "Something went wrong, response_code: " + responseCode, Toast.LENGTH_LONG).show();
                         }
                         else {
+                            audio.playSoundEffect(Sounds.SUCCESS);
                             Toast.makeText(currentAppContext, "The cow was successfully removed.", Toast.LENGTH_SHORT).show();
                         }
                     }

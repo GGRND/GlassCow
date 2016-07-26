@@ -1,39 +1,25 @@
 package com.eaaa.glasscow;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.eaaa.glasscow.model.Cow;
 import com.eaaa.glasscow.service.RemoteDatabase;
+import com.eaaa.glasscow.transfer_cows.Transfer_Cow;
 import com.google.android.glass.view.WindowUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
-
-public class Activity_Dead_Cow extends Activity {
+public class Activity_Dead_Cow extends Transfer_Cow {
 
     private TextView cowIDView, dateTextView, firstDescription, secondDescription;
     private RelativeLayout destructionView, dateView;
-    private Menu menu;
 
-    private Activity_Main ctx;
     private RemoteDatabase remoteDatabase;
     private Cow cow;
-    private static Context context;
-    private BroadcastReceiver mBroadcastReceiver;
 
     private final long transferCodeId = 9;
     private String animalNumber;
@@ -45,30 +31,6 @@ public class Activity_Dead_Cow extends Activity {
     public static final int MENU_CURRENT_DATE_NO = 12;
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                System.out.println("Så langt så godt");
-                Bundle bundle = intent.getExtras();
-                if (!bundle.isEmpty()) {
-                    int responseCode = bundle.getInt("response_code");
-
-                    if (responseCode != 200) {
-                        Toast.makeText(Activity_Dead_Cow.this, "Something went wrong. Response_Code: " + responseCode, Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(Activity_Dead_Cow.getAppContext().getApplicationContext(), "Cow successfully removed from database.", Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            }
-        };
-        mBroadcastReceiver.goAsync();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -76,26 +38,25 @@ public class Activity_Dead_Cow extends Activity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_dead);
-        ctx = new Activity_Main();
+        Activity_Main ctx = new Activity_Main();
         remoteDatabase = RemoteDatabase.getInstance(ctx);
         initElements();
         firstDescription.setVisibility(View.VISIBLE);
         getCowInfo();
         setElements();
-        Activity_Dead_Cow.context = getApplicationContext();
     }
 
     /**
      * Gets the required information about the current cow
      */
-    private void getCowInfo() {
+    public void getCowInfo() {
         cow = com.eaaa.glasscow.Activity_Main.cow;
         herdId = cow.getHerdId();
         shortAnimalNumber = cow.getShortNumber();
         animalNumber = cow.getFullNumber();
     }
 
-    private void initElements() {
+    public void initElements() {
         cowIDView = (TextView) findViewById(R.id.CowID_deadCow);
         dateTextView = (TextView) findViewById(R.id.date_deadCow);
         firstDescription = (TextView) findViewById(R.id.first_description_deadCow);
@@ -104,28 +65,9 @@ public class Activity_Dead_Cow extends Activity {
         dateView = (RelativeLayout) findViewById(R.id.date_text_deadCow);
     }
 
-    private void setElements() {
+    public void setElements() {
         cowIDView.setText(removeZero(shortAnimalNumber));
     }
-
-    private void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
-    public static Context getAppContext() {
-        return Activity_Dead_Cow.context;
-    }
-
-    /**
-     * Sets the current date and makes the view visible
-     */
-    private void setCurrentDate() {
-        date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date());
-
-        dateTextView.setText(date);
-        dateView.setVisibility(View.VISIBLE);
-    }
-
 
     /**
      * Toggles visibility of certain views given the context of the field variable menuNumberCounter
@@ -137,7 +79,6 @@ public class Activity_Dead_Cow extends Activity {
             destructionView.setVisibility(View.VISIBLE);
             secondDescription.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
@@ -148,15 +89,16 @@ public class Activity_Dead_Cow extends Activity {
         switch (item.getItemId()) {
             case MENU_CURRENT_DATE_YES:
                 if (menuNumberCounter == 1) {
-                    setCurrentDate();
+                    setCurrentDate(dateTextView, dateView);
                     setCertainViewVisible();
                 }
                 if (menuNumberCounter == 2) {
                     remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(herdId)),
-                            Long.valueOf(animalNumber), transferCodeId, date, "dead", this.getApplicationContext());
+                            Long.valueOf(animalNumber), transferCodeId, super.getDate(), "dead", this.getApplicationContext());
                 }
                 menuNumberCounter++;
                 break;
+
             case MENU_CURRENT_DATE_NO:
                 if (menuNumberCounter == 1) {
 
@@ -179,19 +121,5 @@ public class Activity_Dead_Cow extends Activity {
             return true;
         }
         return super.onCreatePanelMenu(featureId, menu);
-    }
-
-    private String removeZero(String cowNumber) {
-        int number = Integer.valueOf(cowNumber);
-        String newCowNumber = String.valueOf(number);
-        return newCowNumber;
-    }
-
-    /**
-     * Fjerner nul fra ko-nummer
-     */
-    public String convertHerdNumber(String herdNumber) {
-        String numbers = herdNumber.substring(0, herdNumber.length() - 2);
-        return numbers;
     }
 }
