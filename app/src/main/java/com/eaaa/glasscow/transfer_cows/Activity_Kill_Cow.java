@@ -52,7 +52,8 @@ public class Activity_Kill_Cow extends Transfer_Interface {
     }
 
     public void setElements() {
-        cowIDView.setText(removeZero(super.getShortAnimalNumber()));
+        cowIDView.setText(removeZero(getShortAnimalNumber()));
+        setToHerdId("71930");
     }
 
 
@@ -79,8 +80,8 @@ public class Activity_Kill_Cow extends Transfer_Interface {
                     setCertainViewVisible();
                 }
                 if (menuNumberCounter == 2) {
-                    remoteDatabase.sendDeath(Integer.valueOf(convertHerdNumber(super.getHerdId())),
-                            Long.valueOf(super.getAnimalNumber()), transferCodeId, super.getDate(), "killed", this.getApplicationContext());
+                    remoteDatabase.transferCow(Integer.valueOf(convertHerdNumber(getHerdId())), Integer.valueOf(getToHerdId()),
+                            Long.valueOf(getAnimalNumber()), transferCodeId, getDate(), this.getApplicationContext());
                 }
                 menuNumberCounter++;
                 break;

@@ -13,7 +13,7 @@ import java.util.Date;
 
 public abstract class Transfer_Interface extends Activity {
 
-    private String date, herdId, shortAnimalNumber, animalNumber;
+    private String date, herdId, toHerdId, shortAnimalNumber, animalNumber;
 
     private Menu menu;
     private Cow cow;
@@ -91,5 +91,13 @@ public abstract class Transfer_Interface extends Activity {
 
     public String getHerdId() {
         return herdId;
+    }
+
+    public String getToHerdId() {
+        return toHerdId;
+    }
+
+    public void setToHerdId(String toHerdId) {
+        this.toHerdId = toHerdId;
     }
 }

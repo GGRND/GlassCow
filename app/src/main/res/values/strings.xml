@@ -48,7 +48,11 @@
 
     <!-- Description texts for activity_kill -->
     <string name="first_description_killCow">Ønskes dags dato valgt?</string>
-    <string name="second_description_killCow">Ønskes dags dato valgt?</string>
+    <string name="second_description_killCow">Skal informationerne sendes?</string>
+
+    <!-- Description texts for activity_slaughter -->
+    <string name="first_description_slaughterCow">Ønskes dags dato valgt?</string>
+    <string name="second_description_slaughterCow">Skal informationerne sendes?</string>
 
     <!-- Description texts for Activity_transfer -->
     <string name="first_description_transfer">Something something something</string>

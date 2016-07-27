@@ -46,7 +46,7 @@ public class RemoteDatabase {
 
     private static int responseCode;
     private static boolean tokenOrResponse = false;
-    private static String whichClass;
+    private static boolean isACowBeingTransferred = false;
     private static Context currentAppContext;
 
     class PriorityExecutor implements Executor {
@@ -89,20 +89,20 @@ public class RemoteDatabase {
                 e.printStackTrace();
             }
 
-            if (!whichClass.isEmpty()) {
+            if (isACowBeingTransferred) {
                 if (tokenOrResponse) {
                     AudioManager audio = (AudioManager) currentAppContext.getSystemService(Context.AUDIO_SERVICE);
 
-                    if (whichClass.equals("dead") || whichClass.equals("killed")) {
-                        if (responseCode != 200) {
-                            audio.playSoundEffect(Sounds.ERROR);
-                            Toast.makeText(currentAppContext, "Something went wrong, response_code: " + responseCode, Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            audio.playSoundEffect(Sounds.SUCCESS);
-                            Toast.makeText(currentAppContext, "The cow was successfully removed.", Toast.LENGTH_SHORT).show();
-                        }
+                    //TODO FEEDBACK FOR DE FLESTE TYPER RESPONSES
+                    if (responseCode != 200) {
+                        audio.playSoundEffect(Sounds.ERROR);
+                        Toast.makeText(currentAppContext, "Something went wrong, response_code: " + responseCode, Toast.LENGTH_LONG).show();
                     }
+                    else {
+                        audio.playSoundEffect(Sounds.SUCCESS);
+                        Toast.makeText(currentAppContext, "The cow was successfully removed.", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         }
@@ -112,7 +112,7 @@ public class RemoteDatabase {
             StringBuffer response = new StringBuffer();
 
             //Manages whether it's a token or something else that's being handled
-            if (whichClass.equals("dead") || whichClass.equals("killed")) {
+            if (isACowBeingTransferred) {
                 if (tokenOrResponse == false) {
                     tokenOrResponse = true;
                 }
@@ -127,7 +127,7 @@ public class RemoteDatabase {
 
             //Setup and execute request
             URL obj = new URL(params.get(0));
-            HttpsURLConnection con = null;
+            HttpsURLConnection con;
             try {
                 con = (HttpsURLConnection) obj.openConnection();
                 con.setRequestMethod("POST");
@@ -135,7 +135,7 @@ public class RemoteDatabase {
                     con.setRequestProperty(params.get(i), params.get(i+1));
                 }
                 con.setDoOutput(true);
-                OutputStream outstream = null;
+                OutputStream outstream;
                 outstream = con.getOutputStream();
                 DataOutputStream wr = new DataOutputStream(outstream);
                 wr.writeBytes(params.get(1));
@@ -163,7 +163,7 @@ public class RemoteDatabase {
             //Read response
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream(), "UTF-8"));
-            String inputLine = new String();
+            String inputLine;
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
@@ -389,27 +389,30 @@ public class RemoteDatabase {
     }
 
 
-    //Parser om et dyr er aflivet, slagtning, whatever.
-    public void sendDeath(final Integer herdId, final Long animalNumber, final long transferCodeId,
-                          final String date, final String whichClass, final Context appContext) {
-        this.whichClass = whichClass;
+    /**
+     * Handles the database things for cows if they are: dead, killed or slaughtered.
+     */
+    public void transferCow(final Integer fromHerdId, final Integer toHerdId, final Long animalNumber, final long transferCodeId,
+                            final String date, final Context appContext) {
+        this.isACowBeingTransferred = true;
         currentAppContext = appContext;
+
         if (isTokenRequestNeeded())
         {
             new retrieveTokenTask() {
                 @Override
                 void callBack(String result) {
                     if (!isTokenRequestNeeded())
-                        doSendDeath(herdId, animalNumber, transferCodeId, date);
+                        doTransferCow(fromHerdId, toHerdId, animalNumber, transferCodeId, date);
                 }
             }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
         }
         else
         {
-            doSendDeath(herdId, animalNumber, transferCodeId, date);
+            doTransferCow(fromHerdId, toHerdId, animalNumber, transferCodeId, date);
         }
     }
-    private void doSendDeath(final Integer herdId, final Long animalNumber, final long transferCodeId, final String date) {
+    private void doTransferCow(final Integer fromHerdId, final Integer toHerdId, final Long animalNumber, final long transferCodeId, final String date) {
         //Should make it possible to debug this method
         //android.os.Debug.waitForDebugger();
 
@@ -420,11 +423,11 @@ public class RemoteDatabase {
         params.add(conf.get_Audience() + "CattleWebApi/AnimalTransferPublicOperations/UpdateAnimalTransfersPublic?AgriBusinessId=" + conf.get_AgriBusinessId());
         params.add("{\"$id\":\"1\"," +
                 "\"AnimalId\":\"" + animalNumber + "\"," +
-                "\"FromHerdNumber\":\"" + herdId + "\"," +
+                "\"FromHerdNumber\":\"" + fromHerdId + "\"," +
                 "\"TransferDate\":\"" + date + "\"," +
                 "\"TransferCodeId\":\"" + transferCodeId + "\"," +
                 "\"TransferCause1Id\":\"" + null + "\"," +
-                "\"ToHerdNumber\":\"" + 71930 + "}");
+                "\"ToHerdNumber\":\"" + toHerdId + "}");
 
         params.add("Authorization");
         params.add("SAML " + token);
@@ -444,61 +447,6 @@ public class RemoteDatabase {
             void callBack(String result) throws JSONException {
                 //Log.d("Sent obs response", result);
 
-            }
-        }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
-    }
-
-    public void send2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
-        if (isTokenRequestNeeded())
-        {
-            new retrieveTokenTask() {
-                @Override
-                void callBack(String result) {
-                    if (!isTokenRequestNeeded())
-                        doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
-                }
-            }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY));
-        }
-        else
-        {
-            doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
-        }
-    }
-    private void doSend2Herd(final String herdId, final String newHerdID, final String animalNumber, final long transferCodeId, final String date) {
-        //Should make it possible to debug this method
-        //android.os.Debug.waitForDebugger();
-
-        Configuration conf = context.getConfiguration();
-
-        //send observation to backend database
-        ArrayList<String> params = new ArrayList<String>();
-        params.add(conf.get_Audience() + "CattleWebApi/GoogleGlassesOperations/CreateAnimalObservation?AgriBusinessId=" + conf.get_AgriBusinessId());
-        params.add("{\"$id\":\"1\"," +
-                "\"AnimalId\":\"" + animalNumber + "\"," +
-                "\"FromHerdNumber\":\"" + herdId + "\"," +
-                "\"TransferDate\":\"" + date + "\"," +
-                "\"TransferCodeId\":\"" + transferCodeId + "\"," +
-                "\"TransferCause1Id\":\"" + null + "\"," +
-                "\"ToHerdNumber\":\"" + newHerdID + "}");
-
-        params.add("Authorization");
-        params.add("SAML " + token);
-
-        params.add("Accept-Encoding");
-        params.add("gzip, deflate");
-
-        params.add("Content-Type");
-        params.add("application/json; charset=utf-8");
-
-        params.add("Host");
-        params.add(conf.get_Host());
-
-
-        new postSecureRequestTask() {
-            @Override
-            void callBack(String result) throws JSONException {
-                //Log.d("Sent obs response", result);
-                doSend2Herd(herdId, newHerdID, animalNumber, transferCodeId, date);
             }
         }.executeOnExecutor(new PriorityExecutor(Thread.NORM_PRIORITY), params);
     }

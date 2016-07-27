@@ -119,7 +119,7 @@ public class MenuHandler {
                 break;
 
             case MENU_TURNOVER_SLAUGHTER:
-
+                activity.registerSlaughteredCow();
                 break;
 
             case MENU_TURNOVER_DEAD:
@@ -127,7 +127,7 @@ public class MenuHandler {
                 break;
 
             case MENU_TURNOVER_KILLED:
-
+                activity.registerKilledCow();
                 break;
 
         /*case MENU_IDENTIFY_OBSERVATION:

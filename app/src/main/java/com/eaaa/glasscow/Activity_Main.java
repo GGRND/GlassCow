@@ -22,6 +22,8 @@ import com.eaaa.glasscow.service.CowService;
 import com.eaaa.glasscow.tools.CowScrollView;
 import com.eaaa.glasscow.tools.CowScrollViewAdapter;
 import com.eaaa.glasscow.transfer_cows.Activity_Dead_Cow;
+import com.eaaa.glasscow.transfer_cows.Activity_Kill_Cow;
+import com.eaaa.glasscow.transfer_cows.Activity_Slaughter_Cow;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
@@ -202,6 +204,19 @@ public class Activity_Main extends Activity implements AsyncCowResponse,
 
 		startActivity(intent);
 	}
+
+	public void registerKilledCow() {
+		Intent intent = new Intent(this, Activity_Kill_Cow.class);
+
+		startActivity(intent);
+	}
+
+	public void registerSlaughteredCow() {
+		Intent intent = new Intent(this, Activity_Slaughter_Cow.class);
+
+		startActivity(intent);
+	}
+
 	public void moveCowToHerd() {
 		Intent intent = new Intent(this, Activity_Transfer_Cow.class);
 
