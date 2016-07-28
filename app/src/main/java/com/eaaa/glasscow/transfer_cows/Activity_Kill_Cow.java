@@ -91,7 +91,7 @@ public class Activity_Kill_Cow extends Transfer_Interface {
 
                 }
                 if (menuNumberCounter == 2) {
-
+                    recreate();
                 }
                 //TODO manuelt indtale dato.
                 break;

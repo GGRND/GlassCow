@@ -24,12 +24,10 @@
     <string name="menu_identify_observation">All notices</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_new_event">New Event</string>
-    <string name="tester">Identify Cow</string>
+    <string name="identify_cow">Identify Cow</string>
     <string name="turnover">Turnover</string>
 
     <string name="title_activity_scan_settings">ScanSettingsActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_scan_bar_code">ScanBarCodeActivity</string>
     <string name="title_activity_tester">Tester</string>
 
@@ -55,7 +53,7 @@
     <string name="second_description_slaughterCow">Skal informationerne sendes?</string>
 
     <!-- Description texts for Activity_transfer -->
-    <string name="first_description_transfer">Something something something</string>
+    <string name="first_description_transfer">Ønskes dags dato valgt?</string>
     <string name="second_description_transfer">Something something something</string>
 
 </resources>

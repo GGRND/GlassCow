@@ -1,12 +1,14 @@
 package com.eaaa.glasscow.transfer_cows;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.eaaa.glasscow.Activity_Main;
+import com.eaaa.glasscow.MenuHandler;
 import com.eaaa.glasscow.R;
 import com.eaaa.glasscow.service.RemoteDatabase;
 import com.google.android.glass.view.WindowUtils;
@@ -78,7 +80,7 @@ public class Activity_Slaughter_Cow extends Transfer_Interface {
 
                 }
                 if (menuNumberCounter == 2) {
-
+                    recreate();
                 }
                 //TODO manuelt indtale dato.
                 break;
@@ -86,11 +88,26 @@ public class Activity_Slaughter_Cow extends Transfer_Interface {
         return super.onMenuItemSelected(featureId, item);
     }
 
+    @Override
+    public boolean onCreatePanelMenu(int featureId, Menu menu) {
+
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+            MenuHandler.yesNoMenuItems(menu);
+            return true;
+        }
+        return super.onCreatePanelMenu(featureId, menu);
+    }
+
     /**
      * Toggles visibility of certain views given the context of the field variable menuNumberCounter
      */
     public void setCertainViewVisible() {
-
+        if (menuNumberCounter == 1) {
+            dateView.setVisibility(View.VISIBLE);
+            firstDescription.setVisibility(View.INVISIBLE);
+            destructionView.setVisibility(View.VISIBLE);
+            secondDescription.setVisibility(View.VISIBLE);
+        }
     }
 
 }

@@ -38,23 +38,29 @@ public class MenuHandler {
         Log.d("GlassCow:MenuHandler", "updating Menu " + activity.scrollView.getSelectedItemPosition());
         menu.clear();
 
-        menu.add(Menu.NONE, MENU_IDENTIFY_COW, Menu.NONE, R.string.menu_identify_cow);
-        menu.add(Menu.NONE, MENU_MORE, Menu.NONE, R.string.menu_more);
-        menu.add(Menu.NONE, MENU_TESTER, Menu.NONE, R.string.tester);
+
+
+        menu.add(Menu.NONE, MENU_TESTER, Menu.NONE, R.string.identify_cow);
 
         menu.addSubMenu(Menu.NONE, MENU_TURNOVER, Menu.NONE, R.string.turnover);
 
         if (data.getObservationTypeId()!=DatabaseFields.TYPE_ID_Yver) {
             menu.add(Menu.NONE, MENU_INFORMATION, Menu.NONE, R.string.information);
         }
+
         if (data.getObservationTypeId()!=DatabaseFields.TYPE_ID_Lemmer) {
             menu.add(Menu.NONE, MENU_HEALTH, Menu.NONE, R.string.health);
         }
+
         if (data.getObservationTypeId()!=DatabaseFields.TYPE_ID_Brunst) {
             menu.add(Menu.NONE, MENU_REPRODUCTION, Menu.NONE, R.string.reproduction);
         }
 
         menu.add(Menu.NONE, MENU_OBSERVATION, Menu.NONE, R.string.menu_observation);
+
+        menu.add(Menu.NONE, MENU_MORE, Menu.NONE, R.string.menu_more);
+
+        menu.add(Menu.NONE, MENU_IDENTIFY_COW, Menu.NONE, R.string.menu_identify_cow);
 
 
         if (data.hasEvents()) {

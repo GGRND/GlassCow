@@ -93,7 +93,7 @@ public class Activity_Dead_Cow extends Transfer_Interface {
 
                 }
                 if (menuNumberCounter == 2) {
-
+                    recreate();
                 }
                 //TODO manuelt indtale dato.
                 break;
